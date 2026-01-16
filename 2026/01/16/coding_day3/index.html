@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="wangchuan">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2026/01/16/coding_day3/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码随想录_day3(链表01)">
+<meta property="og:url" content="http://example.com/2026/01/16/coding_day3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-01-16T04:02:16.000Z">
+<meta property="article:modified_time" content="2026-01-16T05:54:04.375Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="代码随想录">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/dd.ico" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/dd.ico">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/dd.ico">
+    <!--- Page Info-->
+    
+    <title>
+        
+            代码随想录_day3(链表01) | gggggxd
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Sans SC","url":"https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"This is gggggxd","subtitle":{"text":["just keep on"],"hitokoto":{"enable":true,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文章":{"path":"/archives","icon":"fa-regular fa-archive"},"分类":{"path":"/categories","icon":"fa-regular fa-folder"},"标签":{"path":"/tags","icon":"fa-regular fa-tags"},"Links":{"icon":"fa-regular fa-link","submenus":{"杂七杂八":"/links","GitHub":"https://github.com/gggggxd"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2026/1/12 22:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                gggggxd
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    文章
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/tags"
+                                        >
+                                    <i class="fa-regular fa-tags fa-fw"></i>
+                                    标签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-link fa-fw"></i>
+                                    LINKS
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/links">
+                                                    杂七杂八
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/gggggxd">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/tags"
+                        >
+                            <span>
+                                标签
+                            </span>
+                            
+                                <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-Links"
+                        >
+                            <span>
+                                LINKS
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-Links">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/links">杂七杂八</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/gggggxd">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">3</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">5</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">代码随想录_day3(链表01)</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/blog.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">wangchuan</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-01-16 12:02:16</span>
+        <span class="mobile">2026-01-16 12:02:16</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-01-16 13:54:04</span>
+            <span class="mobile">2026-01-16 13:54:04</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95/">代码随想录</a>&nbsp;
+                        </li>
+                    
+                    
+                
+                    
+                        
+                            <li>></li>
+                        
+                        <li>
+                            <a href="/categories/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95/">代码随想录</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>今天是2026年1月16日，是代码随想录的第三天，主要学习链表的相关知识。</p>
+<h2 id="题目及卡哥解析"><a href="#题目及卡哥解析" class="headerlink" title="题目及卡哥解析"></a>题目及卡哥解析</h2><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">题目</th>
+<th align="center">解析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/remove-linked-list-elements/" >203.移除链表元素<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0203.%E7%A7%BB%E9%99%A4%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/design-linked-list/" >707.设计链表<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0707.%E8%AE%BE%E8%AE%A1%E9%93%BE%E8%A1%A8.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-linked-list/" >206.反转链表<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0206.%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+</tr>
+</tbody></table>
+<h2 id="题目解析"><a href="#题目解析" class="headerlink" title="题目解析"></a>题目解析</h2><h3 id="203-移除链表元素"><a href="#203-移除链表元素" class="headerlink" title="203. 移除链表元素"></a>203. 移除链表元素</h3><ul>
+<li>给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val &#x3D;&#x3D; val 的节点，并返回 新的头节点 。</li>
+</ul>
+<h4 id="个人解析"><a href="#个人解析" class="headerlink" title="个人解析"></a>个人解析</h4><ul>
+<li>首先是203，移除链表元素</li>
+<li>我们都知道当删除链表某个元素时，其实只需要将该元素的前一个节点的next指针指向该元素的下一个节点即可，因此基于这个思路，我们可以遍历链表，当遇到val时，将前一个节点的next指针指向该元素的下一个节点即可。</li>
+</ul>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeElements</span><span class="params">(ListNode* head, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (head != <span class="literal">NULL</span> &amp;&amp; head-&gt;val == val)</span><br><span class="line">        &#123;</span><br><span class="line">            ListNode *temp = head;</span><br><span class="line">            head = head-&gt;next;</span><br><span class="line">            <span class="keyword">delete</span> temp;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ListNode *now = head;</span><br><span class="line">        <span class="keyword">while</span> (now != <span class="literal">NULL</span> &amp;&amp; now-&gt;next != <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (now-&gt;next-&gt;val != val)</span><br><span class="line">                now = now-&gt;next;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                ListNode *temp = now-&gt;next;</span><br><span class="line">                now-&gt;next = now-&gt;next-&gt;next;</span><br><span class="line">                <span class="keyword">delete</span> temp;</span><br><span class="line">                temp = <span class="literal">nullptr</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<p>不过这边要注意的是</p>
+<ul>
+<li>delete命令指示释放了tmp指针原本所指的那部分内存，</li>
+<li>被delete后的指针tmp的值（地址）并非就是NULL，而是随机值。也就是被delete后，</li>
+<li>如果不再加上一句tmp&#x3D;nullptr,tmp会成为乱指的野指针</li>
+<li>如果之后的程序不小心使用了tmp，会指向难以预想的内存空间</li>
+</ul>
+<p><mark>虽然一开始并没有加delete temp也是AC了，不过后面依旧需要注意这个问题。</mark></p>
+<h4 id="卡哥解析"><a href="#卡哥解析" class="headerlink" title="卡哥解析"></a>卡哥解析</h4><p>卡哥这边还提出了两种办法，分别是</p>
+<ol>
+<li><p>虚拟头节点</p>
+<ul>
+<li>我们可以在头节点之前添加一个虚拟头节点，这样就可以统一处理头节点的情况了。</li>
+</ul>
+ <div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeElements</span><span class="params">(ListNode* head, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        ListNode* dummyHead = <span class="keyword">new</span> <span class="built_in">ListNode</span>(<span class="number">0</span>); <span class="comment">// 设置一个虚拟头结点</span></span><br><span class="line">        dummyHead-&gt;next = head; <span class="comment">// 将虚拟头结点指向head，这样方便后面做删除操作</span></span><br><span class="line">        ListNode* cur = dummyHead;</span><br><span class="line">        <span class="keyword">while</span> (cur-&gt;next != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(cur-&gt;next-&gt;val == val) &#123;</span><br><span class="line">                ListNode* tmp = cur-&gt;next;</span><br><span class="line">                cur-&gt;next = cur-&gt;next-&gt;next;</span><br><span class="line">                <span class="keyword">delete</span> tmp;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                cur = cur-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        head = dummyHead-&gt;next;</span><br><span class="line">        <span class="keyword">delete</span> dummyHead;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>采用递归的思路</p>
+<ul>
+<li>基础情况：对于空链表，不需要移除元素。</li>
+<li>递归情况：首先检查头节点的值是否为 val，如果是则移除头节点，答案即为在头节点的后续节点上递归的结果；如果头节点的值不为 val，则答案为头节点与在头节点的后续节点上递归得到的新链表拼接的结果。</li>
+</ul>
+ <div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeElements</span><span class="params">(ListNode* head, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 基础情况：空链表</span></span><br><span class="line">        <span class="keyword">if</span> (head == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 递归处理</span></span><br><span class="line">        <span class="keyword">if</span> (head-&gt;val == val) &#123;</span><br><span class="line">            ListNode* newHead = <span class="built_in">removeElements</span>(head-&gt;next, val);</span><br><span class="line">            <span class="keyword">delete</span> head;</span><br><span class="line">            <span class="keyword">return</span> newHead;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            head-&gt;next = <span class="built_in">removeElements</span>(head-&gt;next, val);</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div></li>
+</ol>
+<hr>
+<h3 id="707-设计链表"><a href="#707-设计链表" class="headerlink" title="707. 设计链表"></a>707. 设计链表</h3><p>你可以选择使用单链表或者双链表，设计并实现自己的链表。单链表中的节点应该具备两个属性：val 和 next 。val 是当前节点的值，next 是指向下一个节点的指针&#x2F;引用。如果是双向链表，则还需要属性 prev 以指示链表中的上一个节点。假设链表中的所有节点下标从 0 开始。</p>
+<p>实现 MyLinkedList 类：</p>
+<ul>
+<li>MyLinkedList() 初始化 MyLinkedList 对象。</li>
+<li>int get(int index) 获取链表中下标为 index 的节点的值。如果下标无效，则返回 -1 。</li>
+<li>void addAtHead(int val) 将一个值为 val 的节点插入到链表中第一个元素之前。在插入完成后，新节点会成为链表的第一个节点。</li>
+<li>void addAtTail(int val) 将一个值为 val 的节点追加到链表中作为链表的最后一个元素。</li>
+<li>void addAtIndex(int index, int val) 将一个值为 val 的节点插入到链表中下标为 index 的节点之前。如果 index 等于链表的长度，那么该节点会被追加到链表的末尾。如果 index 比长度更大，该节点将 不会插入 到链表中。</li>
+<li>void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 index 的节点。</li>
+</ul>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><ul>
+<li>我觉得这是一道考验链表综合素质的题目，需要考虑到很多边界情况，当然还有index的问题，认真仔细做还是可以摸索下去的，因为本身对链表使用上并没有那么熟悉，因此这边也借鉴了不少卡哥的解析</li>
+</ul>
+<details>
+<summary>点击展开代码</summary>
+
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyLinkedList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">ListNode</span> &#123;</span><br><span class="line">        <span class="type">int</span> val;  <span class="comment">// 节点上存储的元素</span></span><br><span class="line">        ListNode *next;  <span class="comment">// 指向下一个节点的指针</span></span><br><span class="line">        <span class="built_in">ListNode</span>(<span class="type">int</span> x) : <span class="built_in">val</span>(x), <span class="built_in">next</span>(<span class="literal">NULL</span>) &#123;&#125;  <span class="comment">// 节点的构造函数</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">MyLinkedList</span>() &#123;</span><br><span class="line">        DummyHead = <span class="keyword">new</span> <span class="built_in">ListNode</span>(<span class="number">0</span>);</span><br><span class="line">        NodeNum = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; NodeNum - <span class="number">1</span> || index &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        ListNode *RealHead = DummyHead-&gt;next;</span><br><span class="line">        <span class="keyword">while</span> (index--)</span><br><span class="line">        &#123;</span><br><span class="line">            RealHead = RealHead-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> RealHead-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtHead</span><span class="params">(<span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        ListNode *NewHead = <span class="keyword">new</span> <span class="built_in">ListNode</span>(val);</span><br><span class="line">        NewHead-&gt;next = DummyHead-&gt;next;</span><br><span class="line">        DummyHead-&gt;next = NewHead;</span><br><span class="line">        NodeNum++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtTail</span><span class="params">(<span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        ListNode *NewTail = <span class="keyword">new</span> <span class="built_in">ListNode</span>(val);</span><br><span class="line">        ListNode *now = DummyHead;</span><br><span class="line">        <span class="keyword">while</span> (now-&gt;next != <span class="literal">nullptr</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            now = now-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        now-&gt;next = NewTail;</span><br><span class="line">        NodeNum++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtIndex</span><span class="params">(<span class="type">int</span> index, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; NodeNum)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        index = index &lt;= <span class="number">0</span> ? <span class="number">0</span> : index;</span><br><span class="line">        ListNode *NewNode = <span class="keyword">new</span> <span class="built_in">ListNode</span>(val);</span><br><span class="line">        ListNode *now = DummyHead;</span><br><span class="line">        <span class="keyword">while</span> (index--)</span><br><span class="line">        &#123;</span><br><span class="line">            now = now-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        NewNode-&gt;next = now-&gt;next;</span><br><span class="line">        now-&gt;next = NewNode;</span><br><span class="line">        NodeNum++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">deleteAtIndex</span><span class="params">(<span class="type">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(index &lt; <span class="number">0</span> || index &gt;= NodeNum)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        ListNode *now = DummyHead;</span><br><span class="line">        <span class="keyword">while</span> (index--)</span><br><span class="line">        &#123;</span><br><span class="line">            now = now-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode *temp = now-&gt;next;</span><br><span class="line">        now-&gt;next = now-&gt;next-&gt;next;</span><br><span class="line">        <span class="keyword">delete</span> temp;</span><br><span class="line">        temp = <span class="literal">nullptr</span>;</span><br><span class="line">        NodeNum--;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    ListNode *DummyHead;</span><br><span class="line">    <span class="type">int</span> NodeNum;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+
+</details>
+
+<p>当然卡哥这边还写出了双链表的形式，思路和虚拟节点比较类似，创建了一个哨兵系节点，指向头节点和尾节点，这样就可以避免头节点为空的情况，同时也可以避免尾节点为空的情况。</p>
+<details>
+<summary>点击展开代码</summary>
+
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//采用循环虚拟结点的双链表实现</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyLinkedList</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 定义双向链表节点结构体</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">DList</span> &#123;</span><br><span class="line">        <span class="type">int</span> elem; <span class="comment">// 节点存储的元素</span></span><br><span class="line">        DList *next; <span class="comment">// 指向下一个节点的指针</span></span><br><span class="line">        DList *prev; <span class="comment">// 指向上一个节点的指针</span></span><br><span class="line">        <span class="comment">// 构造函数，创建一个值为elem的新节点</span></span><br><span class="line">        <span class="built_in">DList</span>(<span class="type">int</span> elem) : <span class="built_in">elem</span>(elem), <span class="built_in">next</span>(<span class="literal">nullptr</span>), <span class="built_in">prev</span>(<span class="literal">nullptr</span>) &#123;&#125;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造函数，初始化链表</span></span><br><span class="line">    <span class="built_in">MyLinkedList</span>() &#123;</span><br><span class="line">        sentinelNode = <span class="keyword">new</span> <span class="built_in">DList</span>(<span class="number">0</span>); <span class="comment">// 创建哨兵节点，不存储有效数据</span></span><br><span class="line">        sentinelNode-&gt;next = sentinelNode; <span class="comment">// 哨兵节点的下一个节点指向自身，形成循环</span></span><br><span class="line">        sentinelNode-&gt;prev = sentinelNode; <span class="comment">// 哨兵节点的上一个节点指向自身，形成循环</span></span><br><span class="line">        size = <span class="number">0</span>; <span class="comment">// 初始化链表大小为0</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取链表中第index个节点的值</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; (size - <span class="number">1</span>) || index &lt; <span class="number">0</span>) &#123; <span class="comment">// 检查索引是否超出范围</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// 如果超出范围，返回-1</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> num;</span><br><span class="line">        <span class="type">int</span> mid = size &gt;&gt; <span class="number">1</span>; <span class="comment">// 计算链表中部位置</span></span><br><span class="line">        DList *curNode = sentinelNode; <span class="comment">// 从哨兵节点开始</span></span><br><span class="line">        <span class="keyword">if</span> (index &lt; mid) &#123; <span class="comment">// 如果索引小于中部位置，从前往后遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; index + <span class="number">1</span>; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;next; <span class="comment">// 移动到目标节点</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果索引大于等于中部位置，从后往前遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size - index; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;prev; <span class="comment">// 移动到目标节点</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        num = curNode-&gt;elem; <span class="comment">// 获取目标节点的值</span></span><br><span class="line">        <span class="keyword">return</span> num; <span class="comment">// 返回节点的值</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在链表头部添加节点</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtHead</span><span class="params">(<span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        DList *newNode = <span class="keyword">new</span> <span class="built_in">DList</span>(val); <span class="comment">// 创建新节点</span></span><br><span class="line">        DList *next = sentinelNode-&gt;next; <span class="comment">// 获取当前头节点的下一个节点</span></span><br><span class="line">        newNode-&gt;prev = sentinelNode; <span class="comment">// 新节点的上一个节点指向哨兵节点</span></span><br><span class="line">        newNode-&gt;next = next; <span class="comment">// 新节点的下一个节点指向原来的头节点</span></span><br><span class="line">        size++; <span class="comment">// 链表大小加1</span></span><br><span class="line">        sentinelNode-&gt;next = newNode; <span class="comment">// 哨兵节点的下一个节点指向新节点</span></span><br><span class="line">        next-&gt;prev = newNode; <span class="comment">// 原来的头节点的上一个节点指向新节点</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在链表尾部添加节点</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtTail</span><span class="params">(<span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        DList *newNode = <span class="keyword">new</span> <span class="built_in">DList</span>(val); <span class="comment">// 创建新节点</span></span><br><span class="line">        DList *prev = sentinelNode-&gt;prev; <span class="comment">// 获取当前尾节点的上一个节点</span></span><br><span class="line">        newNode-&gt;next = sentinelNode; <span class="comment">// 新节点的下一个节点指向哨兵节点</span></span><br><span class="line">        newNode-&gt;prev = prev; <span class="comment">// 新节点的上一个节点指向原来的尾节点</span></span><br><span class="line">        size++; <span class="comment">// 链表大小加1</span></span><br><span class="line">        sentinelNode-&gt;prev = newNode; <span class="comment">// 哨兵节点的上一个节点指向新节点</span></span><br><span class="line">        prev-&gt;next = newNode; <span class="comment">// 原来的尾节点的下一个节点指向新节点</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在链表中的第index个节点之前添加值为val的节点</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">addAtIndex</span><span class="params">(<span class="type">int</span> index, <span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; size) &#123; <span class="comment">// 检查索引是否超出范围</span></span><br><span class="line">            <span class="keyword">return</span>; <span class="comment">// 如果超出范围，直接返回</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (index &lt;= <span class="number">0</span>) &#123; <span class="comment">// 如果索引为0或负数，在头部添加节点</span></span><br><span class="line">            <span class="built_in">addAtHead</span>(val);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> num;</span><br><span class="line">        <span class="type">int</span> mid = size &gt;&gt; <span class="number">1</span>; <span class="comment">// 计算链表中部位置</span></span><br><span class="line">        DList *curNode = sentinelNode; <span class="comment">// 从哨兵节点开始</span></span><br><span class="line">        <span class="keyword">if</span> (index &lt; mid) &#123; <span class="comment">// 如果索引小于中部位置，从前往后遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; index; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;next; <span class="comment">// 移动到目标位置的前一个节点</span></span><br><span class="line">            &#125;</span><br><span class="line">            DList *temp = curNode-&gt;next; <span class="comment">// 获取目标位置的节点</span></span><br><span class="line">            DList *newNode = <span class="keyword">new</span> <span class="built_in">DList</span>(val); <span class="comment">// 创建新节点</span></span><br><span class="line">            curNode-&gt;next = newNode; <span class="comment">// 在目标位置前添加新节点</span></span><br><span class="line">            temp-&gt;prev = newNode; <span class="comment">// 目标位置的节点的前一个节点指向新节点</span></span><br><span class="line">            newNode-&gt;next = temp; <span class="comment">// 新节点的下一个节点指向目标位置的结点</span></span><br><span class="line">            newNode-&gt;prev = curNode; <span class="comment">// 新节点的上一个节点指向当前节点</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果索引大于等于中部位置，从后往前遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size - index; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;prev; <span class="comment">// 移动到目标位置的后一个节点</span></span><br><span class="line">            &#125;</span><br><span class="line">            DList *temp = curNode-&gt;prev; <span class="comment">// 获取目标位置的节点</span></span><br><span class="line">            DList *newNode = <span class="keyword">new</span> <span class="built_in">DList</span>(val); <span class="comment">// 创建新节点</span></span><br><span class="line">            curNode-&gt;prev = newNode; <span class="comment">// 在目标位置后添加新节点</span></span><br><span class="line">            temp-&gt;next = newNode; <span class="comment">// 目标位置的节点的下一个节点指向新节点</span></span><br><span class="line">            newNode-&gt;prev = temp; <span class="comment">// 新节点的上一个节点指向目标位置的节点</span></span><br><span class="line">            newNode-&gt;next = curNode; <span class="comment">// 新节点的下一个节点指向当前节点</span></span><br><span class="line">        &#125;</span><br><span class="line">        size++; <span class="comment">// 链表大小加1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除链表中的第index个节点</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">deleteAtIndex</span><span class="params">(<span class="type">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; (size - <span class="number">1</span>) || index &lt; <span class="number">0</span>) &#123; <span class="comment">// 检查索引是否超出范围</span></span><br><span class="line">            <span class="keyword">return</span>; <span class="comment">// 如果超出范围，直接返回</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> num;</span><br><span class="line">        <span class="type">int</span> mid = size &gt;&gt; <span class="number">1</span>; <span class="comment">// 计算链表中部位置</span></span><br><span class="line">        DList *curNode = sentinelNode; <span class="comment">// 从哨兵节点开始</span></span><br><span class="line">        <span class="keyword">if</span> (index &lt; mid) &#123; <span class="comment">// 如果索引小于中部位置，从前往后遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; index; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;next; <span class="comment">// 移动到目标位置的前一个节点</span></span><br><span class="line">            &#125;</span><br><span class="line">            DList *next = curNode-&gt;next-&gt;next; <span class="comment">// 获取目标位置的下一个节点</span></span><br><span class="line">            curNode-&gt;next = next; <span class="comment">// 删除目标位置的节点</span></span><br><span class="line">            next-&gt;prev = curNode; <span class="comment">// 目标位置的下一个节点的前一个节点指向当前节点</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果索引大于等于中部位置，从后往前遍历</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size - index - <span class="number">1</span>; i++) &#123;</span><br><span class="line">                curNode = curNode-&gt;prev; <span class="comment">// 移动到目标位置的后一个节点</span></span><br><span class="line">            &#125;</span><br><span class="line">            DList *prev = curNode-&gt;prev-&gt;prev; <span class="comment">// 获取目标位置的下一个节点</span></span><br><span class="line">            curNode-&gt;prev = prev; <span class="comment">// 删除目标位置的节点</span></span><br><span class="line">            prev-&gt;next = curNode; <span class="comment">// 目标位置的下一个节点的下一个节点指向当前节点</span></span><br><span class="line">        &#125;</span><br><span class="line">        size--; <span class="comment">// 链表大小减1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> size; <span class="comment">// 链表的大小</span></span><br><span class="line">    DList *sentinelNode; <span class="comment">// 哨兵节点的指针</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+</details>
+
+<hr>
+<h3 id="206-反转链表"><a href="#206-反转链表" class="headerlink" title="206.反转链表"></a>206.反转链表</h3><ul>
+<li>给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。</li>
+</ul>
+<h4 id="个人解析-1"><a href="#个人解析-1" class="headerlink" title="个人解析"></a>个人解析</h4><ul>
+<li>这边想的其实比较简单，采用双指针的方法，一个指针指向当前节点，一个指针指向当前节点的前一个节点，每次遍历到当前节点时，将当前节点的下一个节点指向前一个节点，然后将前一个节点指向当前节点，当前节点指向当前节点的下一个节点。即完成反转。</li>
+</ul>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode *now = head;</span><br><span class="line">        ListNode *pre = <span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span> (now)</span><br><span class="line">        &#123;</span><br><span class="line">            ListNode *temp = now-&gt;next;</span><br><span class="line">            now-&gt;next = pre;</span><br><span class="line">            pre = now;</span><br><span class="line">            now = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> pre;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<h4 id="卡哥解析-1"><a href="#卡哥解析-1" class="headerlink" title="卡哥解析"></a>卡哥解析</h4><p>当然卡哥这边还提出了两种办法</p>
+<ol>
+<li>递归法<ul>
+<li>因为本身是重复性的操作，所以可以采用递归的方法。</li>
+</ul>
+ <div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverse</span><span class="params">(ListNode* pre,ListNode* cur)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(cur == <span class="literal">NULL</span>) <span class="keyword">return</span> pre;</span><br><span class="line">        ListNode* temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        <span class="comment">// 可以和双指针法的代码进行对比，如下递归的写法，其实就是做了这两步</span></span><br><span class="line">        <span class="comment">// pre = cur;</span></span><br><span class="line">        <span class="comment">// cur = temp;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reverse</span>(cur,temp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 和双指针法初始化是一样的逻辑</span></span><br><span class="line">        <span class="comment">// ListNode* cur = head;</span></span><br><span class="line">        <span class="comment">// ListNode* pre = NULL;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reverse</span>(<span class="literal">NULL</span>, head);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div></li>
+<li>从后向前翻转<ul>
+<li>也是采用了递归的方法，不过顺序有所不同</li>
+</ul>
+ <div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 边缘条件判断</span></span><br><span class="line">        <span class="keyword">if</span>(head == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">if</span> (head-&gt;next == <span class="literal">NULL</span>) <span class="keyword">return</span> head;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 递归调用，翻转第二个节点开始往后的链表</span></span><br><span class="line">        ListNode *last = <span class="built_in">reverseList</span>(head-&gt;next);</span><br><span class="line">        <span class="comment">// 翻转头节点与第二个节点的指向</span></span><br><span class="line">        head-&gt;next-&gt;next = head;</span><br><span class="line">        <span class="comment">// 此时的 head 节点为尾节点，next 需要指向 NULL</span></span><br><span class="line">        head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">return</span> last;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure></div></li>
+</ol>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 代码随想录_day3(链表01)</li>
+        <li><strong>Author:</strong> wangchuan</li>
+        <li><strong>Created at
+                :</strong> 2026-01-16 12:02:16</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2026-01-16 13:54:04
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://redefine.ohevan.com/2026/01/16/coding_day3/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95/">#代码随想录</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/01/15/coding-day2/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">代码随想录_day2(数组02)</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        async function loadGiscus() {
+            const giscusConfig = {
+                'src': 'https://giscus.app/client.js',
+                'data-repo': 'gggggxd/gggggxd.github.io',
+                'data-repo-id': 'R_kgDOQ4X0pw',
+                'data-category': 'Announcements',
+                'data-category-id': 'DIC_kwDOQ4X0p84C046D',
+                'data-mapping': 'title',
+                'data-strict': '0',
+                'data-reactions-enabled': '1',
+                'data-emit-metadata': '1',
+                'data-theme': 'preferred_color_scheme',
+                'data-lang': 'zh-CN',
+                'data-input-position': 'bottom',
+                'data-loading': 'lazy',
+                'crossorigin': 'anonymous',
+                'async': true
+            }
+            const giscusScript = document.createElement('script');
+            for (const key in giscusConfig) {
+                giscusScript.setAttribute(key, giscusConfig[key]);
+            }
+            document.getElementById('giscus-container').appendChild(giscusScript);
+        }
+        if ('true') {
+            let loadGiscusTimeout = setTimeout(() => {
+                loadGiscus();
+                clearTimeout(loadGiscusTimeout);
+            }, 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', loadGiscus);
+        }
+    </script>
+
+
+        
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">代码随想录_day3(链表01)</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%8F%8A%E5%8D%A1%E5%93%A5%E8%A7%A3%E6%9E%90"><span class="nav-text">题目及卡哥解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%A7%A3%E6%9E%90"><span class="nav-text">题目解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#203-%E7%A7%BB%E9%99%A4%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0"><span class="nav-text">203. 移除链表元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#707-%E8%AE%BE%E8%AE%A1%E9%93%BE%E8%A1%A8"><span class="nav-text">707. 设计链表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#206-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8"><span class="nav-text">206.反转链表</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2026</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">wangchuan</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        5 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Search..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>
