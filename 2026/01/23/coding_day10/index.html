@@ -123,7 +123,7 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2026/01/19/coding_day6/"/>
+    <link rel="canonical" href="http://example.com/2026/01/23/coding_day10/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
@@ -133,14 +133,14 @@
         
         <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码随想录_day6(哈希表01)">
-<meta property="og:url" content="http://example.com/2026/01/19/coding_day6/index.html">
+<meta property="og:title" content="代码随想录_day10(栈与队列02)">
+<meta property="og:url" content="http://example.com/2026/01/23/coding_day10/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/redefine-og.webp">
-<meta property="article:published_time" content="2026-01-19T06:26:37.000Z">
-<meta property="article:modified_time" content="2026-01-20T07:41:29.631Z">
+<meta property="article:published_time" content="2026-01-23T02:20:18.000Z">
+<meta property="article:modified_time" content="2026-01-23T16:42:32.668Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="代码随想录">
 <meta name="twitter:card" content="summary">
@@ -156,7 +156,7 @@
     
     <title>
         
-            代码随想录_day6(哈希表01) | gggggxd
+            代码随想录_day10(栈与队列02) | gggggxd
         
     </title>
 
@@ -532,7 +532,7 @@
 		<div class="article-title relative w-full">
 			
 			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">代码随想录_day6(哈希表01)</h1>
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">代码随想录_day10(栈与队列02)</h1>
 			</div>
 			
 		</div>
@@ -553,15 +553,15 @@
 					<div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2026-01-19 14:26:37</span>
-        <span class="mobile">2026-01-19 14:26:37</span>
+        <span class="desktop">2026-01-23 10:20:18</span>
+        <span class="mobile">2026-01-23 10:20:18</span>
         <span class="hover-info">Created</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-01-20 15:41:29</span>
-            <span class="mobile">2026-01-20 15:41:29</span>
+            <span class="desktop">2026-01-24 00:42:32</span>
+            <span class="mobile">2026-01-24 00:42:32</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -625,7 +625,7 @@
 
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-			<p>今天是2026年1月19日，是代码随想录的第六天，主要学习哈希表的相关知识。</p>
+			<p>今天是2026年1月23日，是代码随想录的第十天，主要学习栈与队列的相关知识。</p>
 <h2 id="题目及卡哥解析"><a href="#题目及卡哥解析" class="headerlink" title="题目及卡哥解析"></a>题目及卡哥解析</h2><table>
 <thead>
 <tr>
@@ -636,69 +636,75 @@
 </thead>
 <tbody><tr>
 <td align="center">1</td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-anagram/description/" >242.有效的字母异位词<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0242.%E6%9C%89%E6%95%88%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/implement-queue-using-stacks/description/" >232.用栈实现队列<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97.html#%E7%AE%97%E6%B3%95%E5%85%AC%E5%BC%80%E8%AF%BE" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
 </tr>
 <tr>
 <td align="center">2</td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/intersection-of-two-arrays/description/" >349. 两个数组的交集<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0349.%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%E7%9A%84%E4%BA%A4%E9%9B%86.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/implement-stack-using-queues/description/" >225. 用队列实现栈<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0225.%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88.html#%E6%80%9D%E8%B7%AF" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
 </tr>
 <tr>
 <td align="center">3</td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/happy-number/description/" >202. 快乐数<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0202.%E5%BF%AB%E4%B9%90%E6%95%B0.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-parentheses/description/" >20. 有效的括号<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0020.%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7.html#%E6%80%9D%E8%B7%AF" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
 </tr>
 <tr>
 <td align="center">4</td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/two-sum/description/" >1. 两数之和<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
-<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/0001.%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/description/" >1047. 删除字符串中的所有相邻重复项<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
+<td align="center"><a class="link"   target="_blank" rel="noopener" href="https://programmercarl.com/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.html#%E6%80%9D%E8%B7%AF" >卡哥解析<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></td>
 </tr>
 </tbody></table>
-<h2 id="题目解析"><a href="#题目解析" class="headerlink" title="题目解析"></a>题目解析</h2><h3 id="242-有效的字母异位词"><a href="#242-有效的字母异位词" class="headerlink" title="242. 有效的字母异位词"></a>242. 有效的字母异位词</h3><ul>
-<li>给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。</li>
+<h2 id="题目解析"><a href="#题目解析" class="headerlink" title="题目解析"></a>题目解析</h2><h3 id="232-用栈实现队列"><a href="#232-用栈实现队列" class="headerlink" title="232. 用栈实现队列"></a>232. 用栈实现队列</h3><p>请你仅使用两个栈实现先入先出队列。队列应当支持一般队列支持的所有操作（push、pop、peek、empty）：<br>实现 MyQueue 类：</p>
+<ul>
+<li>void push(int x) 将元素 x 推到队列的末尾</li>
+<li>int pop() 从队列的开头移除并返回元素</li>
+<li>int peek() 返回队列开头的元素</li>
+<li>boolean empty() 如果队列为空，返回 true ；否则，返回 false<br>说明：</li>
+<li>你 只能 使用标准的栈操作 —— 也就是只有 push to top, peek&#x2F;pop from top, size, 和 is empty 操作是合法的。</li>
+<li>你所使用的语言也许不支持栈。你可以使用 list 或者 deque（双端队列）来模拟一个栈，只要是标准的栈操作即可。</li>
 </ul>
 <h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><ul>
-<li>这道题目难度不大，可以利用数组或者哈希表来统计每个字母出现的次数，然后比较两个字符串中每个字母出现的次数是否相同即可</li>
+<li>因为栈是后进先出，而队列是先进先出，所以我们需要两个栈来实现队列的功能。一个栈用于入队操作，另一个栈用于出队操作。当需要出队时，如果出队栈为空，则将入队栈中的所有元素弹出并压入出队栈中，这样就实现了先进先出的效果。</li>
 </ul>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isAnagram</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> count[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            count[c - <span class="string">&#x27;a&#x27;</span>]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : t) &#123;</span><br><span class="line">            count[c - <span class="string">&#x27;a&#x27;</span>]--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (count[i] != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
-<p>这里遇到了新的cpp中for的写法，是传统for的简化版</p>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (元素类型 变量名 : 可遍历对象) &#123;</span><br><span class="line">    <span class="comment">// 循环体：对每个元素执行的操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>若要修改元素值，可以使用引用类型</p>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (元素类型&amp; 变量名 : 可遍历对象) &#123;</span><br><span class="line">    <span class="comment">// 循环体：对每个元素执行的操作</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">char</span> &amp;c : s) &#123; <span class="comment">// 注意这里的 &amp;</span></span><br><span class="line">        c = <span class="built_in">toupper</span>(c); <span class="comment">// toupper 把小写转大写，需要 &lt;cctype&gt; 头文件</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyQueue</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    stack&lt;<span class="type">int</span>&gt; inStack;</span><br><span class="line">    stack&lt;<span class="type">int</span>&gt; outStack;</span><br><span class="line">    <span class="built_in">MyQueue</span>() &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">        inStack.<span class="built_in">push</span>(x);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(outStack.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(!inStack.<span class="built_in">empty</span>())&#123;</span><br><span class="line">                outStack.<span class="built_in">push</span>(inStack.<span class="built_in">top</span>());</span><br><span class="line">                inStack.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> res = outStack.<span class="built_in">top</span>();</span><br><span class="line">        outStack.<span class="built_in">pop</span>();</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> temp = <span class="keyword">this</span>-&gt;<span class="built_in">pop</span>();</span><br><span class="line">        outStack.<span class="built_in">push</span>(temp);</span><br><span class="line">        <span class="keyword">return</span> temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> inStack.<span class="built_in">empty</span>() &amp;&amp; outStack.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
 
 <hr>
-<h3 id="349-两个数组的交集"><a href="#349-两个数组的交集" class="headerlink" title="349. 两个数组的交集"></a>349. 两个数组的交集</h3><ul>
-<li>给定两个数组 nums1 和 nums2 ，返回 它们的 交集 。输出结果中的每个元素一定是 唯一 的。我们可以 不考虑输出结果的顺序 。</li>
+<h3 id="225-用队列实现栈"><a href="#225-用队列实现栈" class="headerlink" title="225. 用队列实现栈"></a>225. 用队列实现栈</h3><p>请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。<br>实现 MyStack 类：</p>
+<ul>
+<li>void push(int x) 将元素 x 压入栈顶。</li>
+<li>int pop() 移除并返回栈顶元素。</li>
+<li>int top() 返回栈顶元素。</li>
+<li>boolean empty() 如果栈是空的，返回 true ；否则，返回 false 。</li>
 </ul>
 <h4 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h4><ul>
-<li>这道题目思路感觉比较直接，可以利用哈希表来解决，先将第一个数组的元素存入哈希表中，然后遍历第二个数组，判断每个元素是否在哈希表中出现过，如果出现过，则将其加入结果集中，并从哈希表中删除该元素，避免重复加入。</li>
+<li>本来想着和上一道题类似，用两个队列来实现栈的功能，但是发现逻辑是不太对的。这里采用一个队列来实现栈的功能，每次入栈时，将新元素加入队列，然后将队列中之前的元素依次出队并重新入队，这样新元素就会在队列的前面，实现了栈的后进先出效果。</li>
+<li>在查询队列操作时，发现了back()函数，可以直接返回队列的最后一个元素，也就是栈顶元素，这样就可以简化top()函数的实现。</li>
 </ul>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">intersection</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums1, vector&lt;<span class="type">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; nums_set1;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; result;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : nums1)</span><br><span class="line">            nums_set<span class="number">1.</span><span class="built_in">insert</span>(num);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> num : nums2) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums_set<span class="number">1.</span><span class="built_in">count</span>(num)) &#123;</span><br><span class="line">                result.<span class="built_in">insert</span>(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;(result.<span class="built_in">begin</span>(), result.<span class="built_in">end</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyStack</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    <span class="built_in">MyStack</span>() &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">        q.<span class="built_in">push</span>(x);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> size = q.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            q.<span class="built_in">push</span>(q.<span class="built_in">front</span>());</span><br><span class="line">            q.<span class="built_in">pop</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> res = q.<span class="built_in">front</span>();</span><br><span class="line">        q.<span class="built_in">pop</span>();</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">top</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> q.<span class="built_in">back</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> q.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
 
 <hr>
-<h3 id="202-快乐数"><a href="#202-快乐数" class="headerlink" title="202. 快乐数"></a>202. 快乐数</h3><ul>
-<li>编写一个算法来判断一个数 n 是不是快乐数。<br>「快乐数」 定义为：</li>
-<li>对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。</li>
-<li>然后重复这个过程直到这个数变为 1，也可能是 <mark>无限循环</mark> 但始终变不到 1。</li>
-<li>如果这个过程 结果为 1，那么这个数就是快乐数。</li>
-<li>如果 n 是 快乐数 就返回 true ；不是，则返回 false。</li>
+<h3 id="20-有效的括号"><a href="#20-有效的括号" class="headerlink" title="20. 有效的括号"></a>20. 有效的括号</h3><p>给定一个只包括 ‘(‘，’)’，’{‘，’}’，’[‘，’]’ 的字符串 s ，判断字符串是否有效。<br>有效字符串需满足：</p>
+<ul>
+<li>左括号必须用相同类型的右括号闭合。</li>
+<li>左括号必须以正确的顺序闭合。</li>
+<li>每个右括号都有一个对应的相同类型的左括号。</li>
 </ul>
 <h4 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h4><ul>
-<li>拿到题目一开始并没有什么思路，但是卡哥提到说是无限循环，那么这道题就变得简单了，可以利用哈希表来存储每次计算的结果，如果出现过，那么就说明进入了无限循环，返回false；如果计算结果为1，则返回true。</li>
+<li>这道题目就是很直接的栈的应用，遍历字符串，当遇到左括号时，将其入栈，当遇到右括号时，判断栈顶元素是否和当前右括号匹配，如果匹配则将栈顶元素出栈，否则返回false。最后判断栈是否为空，如果为空则返回true，否则返回false。</li>
 </ul>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isHappy</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        unordered_set&lt;<span class="type">int</span>&gt; num;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (num.<span class="built_in">count</span>(n)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            num.<span class="built_in">insert</span>(n);</span><br><span class="line">            <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (n) &#123;</span><br><span class="line">                <span class="type">int</span> digit = n % <span class="number">10</span>;</span><br><span class="line">                sum += digit * digit;</span><br><span class="line">                n /= <span class="number">10</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            n = sum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; stk;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">&#x27;(&#x27;</span> || c == <span class="string">&#x27;&#123;&#x27;</span> || c == <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">                stk.<span class="built_in">push</span>(c);</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (!stk.<span class="built_in">empty</span>() &amp;&amp;</span><br><span class="line">                    ((c == <span class="string">&#x27;)&#x27;</span> &amp;&amp; stk.<span class="built_in">top</span>() == <span class="string">&#x27;(&#x27;</span>) ||</span><br><span class="line">                     (c == <span class="string">&#x27;&#125;&#x27;</span> &amp;&amp; stk.<span class="built_in">top</span>() == <span class="string">&#x27;&#123;&#x27;</span>) ||</span><br><span class="line">                     (c == <span class="string">&#x27;]&#x27;</span> &amp;&amp; stk.<span class="built_in">top</span>() == <span class="string">&#x27;[&#x27;</span>)))</span><br><span class="line">                    stk.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stk.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
 
 <hr>
-<h3 id="1-两数之和"><a href="#1-两数之和" class="headerlink" title="1. 两数之和"></a>1. 两数之和</h3><ul>
-<li>给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target  的那 两个 整数，并返回它们的数组下标。</li>
+<h3 id="1047-删除字符串中的所有相邻重复项"><a href="#1047-删除字符串中的所有相邻重复项" class="headerlink" title="1047. 删除字符串中的所有相邻重复项"></a>1047. 删除字符串中的所有相邻重复项</h3><ul>
+<li>给出由小写字母组成的字符串 s，重复项删除操作会选择两个相邻且相同的字母，并删除它们。</li>
+<li>在 s 上反复执行重复项删除操作，直到无法继续删除。</li>
+<li>在完成所有重复项删除操作后返回最终的字符串。答案保证唯一。</li>
 </ul>
 <h4 id="解析-3"><a href="#解析-3" class="headerlink" title="解析"></a>解析</h4><ul>
-<li>这道题目是经典的两数之和问题，可以利用哈希表来存储每个元素及其对应的下标，然后在遍历数组时，计算出目标值与当前元素的差值，判断该差值是否在哈希表中出现过，如果出现过，则返回该差值对应的下标和当前元素的下标。</li>
-<li>需要注意的是，不能使用同一个元素两次，所以在存储元素时，需要先判断差值是否存在，再存储当前元素。</li>
-<li>还有就是这道题中由于需要范围下表，可以使用map。</li>
+<li>很明显，这道题目是栈的应用，遍历字符串，当遇到和栈顶元素相同的字符时，将栈顶元素出栈，否则将当前字符入栈。最后将栈中的元素依次弹出并拼接成结果字符串返回即可。</li>
 </ul>
-<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">twoSum</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="type">int</span>, <span class="type">int</span>&gt; num_map;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="type">int</span> complement = target - nums[i];</span><br><span class="line">            <span class="keyword">if</span> (num_map.<span class="built_in">count</span>(complement)) &#123;</span><br><span class="line">                <span class="keyword">return</span> &#123;num_map[complement], i&#125;;</span><br><span class="line">            &#125;</span><br><span class="line">            num_map[nums[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">removeDuplicates</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; stk;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!stk.<span class="built_in">empty</span>() &amp;&amp; stk.<span class="built_in">top</span>() == c) &#123;</span><br><span class="line">                stk.<span class="built_in">pop</span>();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                stk.<span class="built_in">push</span>(c);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        string res = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">while</span> (!stk.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            res = stk.<span class="built_in">top</span>() + res;</span><br><span class="line">            stk.<span class="built_in">pop</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
 
 		</div>
 
@@ -706,18 +712,18 @@
 		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
 			<div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> 代码随想录_day6(哈希表01)</li>
+        <li><strong>Title:</strong> 代码随想录_day10(栈与队列02)</li>
         <li><strong>Author:</strong> wangchuan</li>
         <li><strong>Created at
-                :</strong> 2026-01-19 14:26:37</li>
+                :</strong> 2026-01-23 10:20:18</li>
         
             <li>
                 <strong>Updated at
-                    :</strong> 2026-01-20 15:41:29
+                    :</strong> 2026-01-24 00:42:32
             </li>
         
         <li>
-            <strong>Link:</strong> https://redefine.ohevan.com/2026/01/19/coding_day6/
+            <strong>Link:</strong> https://redefine.ohevan.com/2026/01/23/coding_day10/
         </li>
         <li>
             <strong>
@@ -751,12 +757,12 @@
 		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
 			
 			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-				<a class="prev" rel="prev" href="/2026/01/20/coding_day7/">
+				<a class="prev" rel="prev" href="/2026/01/24/coding_day11/">
 					<span class="left arrow-icon flex justify-center items-center">
 						<i class="fa-solid fa-chevron-left"></i>
 					</span>
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">代码随想录_day7(哈希表02)</span>
+						<span class="post-nav-title-item truncate max-w-48">代码随想录_day11(栈和队列02)</span>
 						<span class="post-nav-item">Prev posts</span>
 					</span>
 				</a>
@@ -764,9 +770,9 @@
 			
 			
 			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-				<a class="next" rel="next" href="/2026/01/17/coding_day4/">
+				<a class="next" rel="next" href="/2026/01/22/coding_day9/">
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">代码随想录_day4(链表02)</span>
+						<span class="post-nav-title-item truncate max-w-48">代码随想录_day9(字符串02)</span>
 						<span class="post-nav-item">Next posts</span>
 					</span>
 					<span class="right arrow-icon flex justify-center items-center">
@@ -841,8 +847,8 @@
 		<div class="post-toc-wrap">
 	<div class="post-toc">
 		<div class="toc-title">On this page</div>
-		<div class="page-title">代码随想录_day6(哈希表01)</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%8F%8A%E5%8D%A1%E5%93%A5%E8%A7%A3%E6%9E%90"><span class="nav-text">题目及卡哥解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%A7%A3%E6%9E%90"><span class="nav-text">题目解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#242-%E6%9C%89%E6%95%88%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D"><span class="nav-text">242. 有效的字母异位词</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#349-%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%E7%9A%84%E4%BA%A4%E9%9B%86"><span class="nav-text">349. 两个数组的交集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#202-%E5%BF%AB%E4%B9%90%E6%95%B0"><span class="nav-text">202. 快乐数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C"><span class="nav-text">1. 两数之和</span></a></li></ol></li></ol>
+		<div class="page-title">代码随想录_day10(栈与队列02)</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%8F%8A%E5%8D%A1%E5%93%A5%E8%A7%A3%E6%9E%90"><span class="nav-text">题目及卡哥解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%A7%A3%E6%9E%90"><span class="nav-text">题目解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#232-%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97"><span class="nav-text">232. 用栈实现队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#225-%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88"><span class="nav-text">225. 用队列实现栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7"><span class="nav-text">20. 有效的括号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1047-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9"><span class="nav-text">1047. 删除字符串中的所有相邻重复项</span></a></li></ol></li></ol>
 
 	</div>
 </div>
