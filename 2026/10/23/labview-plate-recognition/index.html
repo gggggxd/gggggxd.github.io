@@ -87,14 +87,14 @@
         
         <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块">
+<meta property="og:title" content="LabVIEW车牌识别">
 <meta property="og:url" content="https://gggggxd.github.io/2026/10/23/labview-plate-recognition/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://gggggxd.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2026-10-23T03:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-23T02:43:31.911Z">
+<meta property="article:modified_time" content="2026-10-23T02:57:37.306Z">
 <meta property="article:author" content="忘川">
 <meta property="article:tag" content="LabVIEW">
 <meta property="article:tag" content="OCR">
@@ -113,7 +113,7 @@
     
     <title>
         
-            用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块 | gggggxd
+            LabVIEW车牌识别 | gggggxd
         
     </title>
 
@@ -489,7 +489,7 @@
 		<div class="article-title relative w-full">
 			
 			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块</h1>
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">LabVIEW车牌识别</h1>
 			</div>
 			
 		</div>
@@ -515,8 +515,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-10-23 10:43:31</span>
-            <span class="mobile">2026-10-23 10:43:31</span>
+            <span class="desktop">2026-10-23 10:57:37</span>
+            <span class="mobile">2026-10-23 10:57:37</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -592,21 +592,14 @@
 
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-			<p>项目做完有一阵了，LabVIEW 也早就从这台机器上卸掉，程序跑不起来，但设计上的取舍还值得记一笔。这篇不复述说明书，只讲当时为什么这么做、哪里踩了坑、以及那组准确率数字背后的真实原因。</p>
-<h2 id="一、为什么绿色车牌是个麻烦"><a href="#一、为什么绿色车牌是个麻烦" class="headerlink" title="一、为什么绿色车牌是个麻烦"></a>一、为什么绿色车牌是个麻烦</h2><p>蓝色车牌是单一底色，取色相阈值一刀切下去，车牌子区域就出来了。新能源绿牌不是——它是<strong>从白到绿的渐变</strong>，同一个车牌上不同位置的白平衡、亮度都不一样。</p>
-<p>这带来两个直接后果：</p>
-<ol>
-<li>用单一 HSL 阈值去抠整块绿色区域，边缘会碎，框选不稳定；</li>
-<li>渐变意味着”绿色”这个判据在车牌内部本身就是变化的。</li>
-</ol>
-<p>当时查到的常规做法是上深度学习检测器，但 2020 版的 LabVIEW + NI Vision 生态里没有现成可用的推理链路，硬接 Python 节点又会把整个部署流程搞复杂。所以最后选了另一条路：<strong>不去对抗渐变，而是利用它</strong>。</p>
-<h2 id="二、整体结构"><a href="#二、整体结构" class="headerlink" title="二、整体结构"></a>二、整体结构</h2><p>系统拆成三个模块，主 VI 负责串流程：</p>
+			<p>用 LabVIEW 2020 + NI Vision Assistant 2020 做一套车牌识别。输入是手机摄像头的实时画面，输出是车牌字符串。整套流程分三段：采集、定位、识别。定位这一段的难点在新能源绿牌——它的底色是从白到绿的渐变，单一颜色阈值切不出完整车牌。下面按技术路线逐段说明。</p>
+<h2 id="一、整体结构"><a href="#一、整体结构" class="headerlink" title="一、整体结构"></a>一、整体结构</h2><p>主程序 <code>main.vi</code> 用一个 While 循环跑整个流程，三个模块各自封装成独立 VI：</p>
 <table>
 <thead>
 <tr>
 <th>模块</th>
 <th>实现</th>
-<th>职责</th>
+<th>作用</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -616,47 +609,83 @@
 </tr>
 <tr>
 <td>车牌定位</td>
-<td><code>subvi蓝色车牌提取.vi</code> &#x2F; <code>subvi绿色车牌提取.vi</code></td>
-<td>颜色空间分割 + 形态学 → 车牌 ROI</td>
+<td><code>subvi蓝色车牌提取.vi</code>、<code>subvi绿色车牌提取.vi</code></td>
+<td>颜色分割 + 形态学 + 形状匹配 → 车牌 ROI</td>
 </tr>
 <tr>
 <td>字符识别</td>
-<td>IMAQ OCR + 训练字符集</td>
+<td>IMAQ OCR</td>
 <td>ROI → 车牌字符串</td>
 </tr>
 </tbody></table>
-<p>主程序是一个 While 循环，里面用 Select 节点分「拍照模式」和「调试模式」两条支路：拍照模式从 IMAQdx 抓一帧写盘再读回来，调试模式直接读指定路径的图片。两条支路汇合后进 OCR，结果输出到前面板的 <code>Read String 2</code>。</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/images/labview/front-panel.png"
                       alt="前面板"
                 ></p>
-<p>先写盘再读回来这一步看着多余，其实是有意为之：调试时手边全是历史照片，走同一条”从文件读”的路径，才能保证两种模式的输入完全一致，出问题时不会混淆是采集变了还是算法变了。</p>
-<h2 id="三、图像采集：拿手机当网络摄像头"><a href="#三、图像采集：拿手机当网络摄像头" class="headerlink" title="三、图像采集：拿手机当网络摄像头"></a>三、图像采集：拿手机当网络摄像头</h2><p>没有工业相机，用的是手机。</p>
-<p>手机端装 IP 摄像头 App 起 MJPEG 服务，PC 端用 <strong>Configure IP Camera Adapter</strong> 把 <code>http://&lt;手机IP&gt;:8081/</code> 注册成一个虚拟摄像头设备：</p>
+<p>前面板只保留必要的输入：摄像头选择、写盘路径、输出图像尺寸（X&#x2F;Y Resolution）、确定与停止按钮。蓝色车牌、绿色车牌两个指示灯显示识别出的是哪一类。主程序有两种工作模式：拍照模式抓一帧写入 <code>File Path 2</code> 再读回来识别，调试模式直接读该路径下的图片。两条支路走同一条读取路径，输入侧完全一致。</p>
+<h2 id="二、图像采集"><a href="#二、图像采集" class="headerlink" title="二、图像采集"></a>二、图像采集</h2><p>没有工业相机，用手机当网络摄像头。</p>
+<p>手机端跑 IP 摄像头 App，起 MJPEG 服务，界面会显示当前局域网的 IP 和端口（如 <code>http://192.168.82.211:8081/</code>）。电脑端用 Configure IP Camera Adapter 把这个地址注册成虚拟摄像头：</p>
 <p><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/images/labview/mjpeg-config.png"
                       alt="MJPEG 配置"
                 ></p>
-<p>连上之后，MAX 里就能看到一个名为 <code>MJPEG Camera &quot;cam3&quot;</code> 的设备，IMAQdx 把它当普通相机用，后面 <code>Open Camera</code> → <code>Configure Grab</code> → <code>Grab2</code> 的流程完全不用改。</p>
-<p>这个方案的好处很直接：零硬件成本、手机随手换、分辨率还不错。代价是延迟和稳定性都受 WiFi 影响，抓帧偶尔会拿到半张图——所以主循环里加了 <code>等待(ms)</code> 做节流，避免把网络缓冲抽干。</p>
-<h2 id="四、车牌定位：两条不同的路"><a href="#四、车牌定位：两条不同的路" class="headerlink" title="四、车牌定位：两条不同的路"></a>四、车牌定位：两条不同的路</h2><p>这是整个项目里最值得说的部分。两种车牌最后走的是<strong>两套不同的算法</strong>，因为它们的可用特征不一样。</p>
-<h3 id="蓝牌：颜色阈值-形状匹配"><a href="#蓝牌：颜色阈值-形状匹配" class="headerlink" title="蓝牌：颜色阈值 + 形状匹配"></a>蓝牌：颜色阈值 + 形状匹配</h3><p>蓝牌的定位链路是：</p>
-<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IMAQ ColorThreshold(HSL 蓝/饱和度/亮度范围)</span><br><span class="line">  → IMAQ Morphology(去噪)</span><br><span class="line">  → IMAQ FillHole(补洞)</span><br><span class="line">  → IMAQ RemoveParticle / Particle Filter 3(按面积、长宽比筛)</span><br><span class="line">  → IMAQ Convex Hull(凸包收紧)</span><br><span class="line">  → IVA Shape Match 2(与车牌模板做形状匹配)</span><br><span class="line">  → IMAQ Overlay Rectangle(画框)</span><br></pre></td></tr></table></figure></div>
+<p>连接建立后，MAX 的设备与接口里会出现一个 <code>MJPEG Camera &quot;cam3&quot;</code>。对 IMAQdx 来说这就是一台普通相机，后面的 <code>Open Camera</code> → <code>Configure Grab</code> → <code>Grab2</code> 流程不需要任何改动。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/grab-vi.png"
+                      alt="单帧采集"
+                ></p>
+<p><code>Grab2</code> 拿到一帧后按 JPEG 格式写入文件，主循环用 <code>等待(ms)</code> 控制取帧间隔，避免把网络缓冲抽空。</p>
+<h2 id="三、车牌定位"><a href="#三、车牌定位" class="headerlink" title="三、车牌定位"></a>三、车牌定位</h2><h3 id="方案选择"><a href="#方案选择" class="headerlink" title="方案选择"></a>方案选择</h3><p>定位环节比较过三种做法：</p>
+<ul>
+<li><strong>边缘检测</strong>（Sobel、Roberts、Canny）：复杂背景下保险杠、装饰条也会产生大量边缘，车牌区域淹没在冗余信息里。</li>
+<li><strong>霍夫变换</strong>：直线检测能力强，但后备箱、保险杠同样是矩形结构，误检率高，计算量也大。</li>
+<li><strong>HSL 颜色空间提取</strong>：车牌底色饱和度高、周围环境饱和度低，在 HSL 空间里容易分离；计算量小，适合实时处理。</li>
+</ul>
+<p>最终选 HSL，并针对绿牌做了单独处理。</p>
+<h3 id="蓝牌：阈值分割-形状匹配"><a href="#蓝牌：阈值分割-形状匹配" class="headerlink" title="蓝牌：阈值分割 + 形状匹配"></a>蓝牌：阈值分割 + 形状匹配</h3><p>蓝牌底色单一，整块都能用阈值提取。流程是：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IMAQ ColorThreshold（HSL 色相/饱和度/亮度范围）</span><br><span class="line">  → IMAQ FillHole            填充孔洞</span><br><span class="line">  → IMAQ RemoveParticle      去除小干扰</span><br><span class="line">  → IMAQ Morphology(Close)   闭运算，把车牌连成整体</span><br><span class="line">  → IMAQ FillHole            再填一次孔洞</span><br><span class="line">  → IMAQ ConvexHull          凸包收紧轮廓</span><br><span class="line">  → IVA Shape Match 2        与蓝牌模板做形状匹配</span><br><span class="line">  → IMAQ Overlay Rectangle   画出 ROI</span><br></pre></td></tr></table></figure></div>
 
-<p>关键在于最后的形状匹配。颜色分割能给出候选区域，但候选里可能有广告牌、蓝色车标、路面反光。用 <code>IVA Shape Match 2</code> 拿一个<strong>匹配分数</strong>，同时把长宽比、面积一起卡住，误检基本就压下去了。</p>
-<p>蓝牌子 VI 的输出是四个坐标 <code>x1Left / x2Right / y1Top / y2Bottom</code>，也就是直接给一个矩形框。</p>
-<h3 id="绿牌：只用下半部分反推整个车牌"><a href="#绿牌：只用下半部分反推整个车牌" class="headerlink" title="绿牌：只用下半部分反推整个车牌"></a>绿牌：只用下半部分反推整个车牌</h3><p>绿牌不能这么干。前面说过，白到绿的渐变会让整块阈值提取失败。</p>
-<p>当时的观察是：<strong>渐变是从上白到下绿，所以车牌下缘一定是饱和度最高、最”绿”的那一段</strong>。于是思路反过来：</p>
-<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IMAQ ColorThreshold(只卡高饱和度绿)</span><br><span class="line">  → 形态学 + 凸包 + 去除小颗粒</span><br><span class="line">  → IMAQ Particle Analysis(拿连通域的外接矩形)</span><br><span class="line">  → 取外接矩形的「下边缘」位置 y2Bottom 和宽度 W</span><br><span class="line">  → 按车牌固定长宽比 H ≈ W × k 反推高度</span><br><span class="line">  → 完整车牌框 = (上下边界由 y2Bottom 与推算高度确定)</span><br></pre></td></tr></table></figure></div>
+<p>先填充孔洞再去小干扰，是为了避免车牌本身因字符或反光断裂时被当成小颗粒删掉。</p>
+<p>阈值分割后仍然会剩下蓝色反光、蓝色车身一类的干扰块。这些区域大多不是矩形，所以用 <code>IVA Shape Match 2</code> 配一张蓝牌模板（<code>blue_moban.png</code>，151×51 的灰度图）做形状匹配，返回每个候选的匹配分数。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/blue-match.png"
+                      alt="形状匹配"
+                ></p>
+<p>筛选策略很直接：分数超过阈值的候选里，只有一个就取它，有多个就取分数最高的那个。定出 ROI 后在原图上裁剪，得到车牌图像：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/blue-result.png"
+                      alt="裁剪结果"
+                ></p>
+<h3 id="绿牌：取下半段，按比例补全"><a href="#绿牌：取下半段，按比例补全" class="headerlink" title="绿牌：取下半段，按比例补全"></a>绿牌：取下半段，按比例补全</h3><p>绿牌底色从白渐变到绿，单一阈值只能提取出下半部分。这一点反过来成了判别依据：<strong>蓝牌的形状匹配失败，就按绿牌处理</strong>。</p>
+<p>绿牌走的链路和蓝牌基本一致——阈值、形态学、凸包、形状匹配——但匹配只能命中下半段：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/green-half.png"
+                      alt="绿牌匹配"
+                ></p>
+<p>拿到下半段之后利用渐变的方向性补全。渐变是<strong>由上往下</strong>的，横向颜色一致，所以下半段掩码的底边就是整块车牌的底边，掩码的宽度就是车牌的长边像素长度。车牌尺寸是国标固定的，长宽比已知，于是：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">车牌高度 H ≈ 宽度 W × 国标长宽比</span><br><span class="line">车牌上边界 = 底边 y − H</span><br></pre></td></tr></table></figure></div>
 
-<p>代码里能明显看到这条线索：绿牌子 VI 里有 <code>数组大小</code>、<code>簇至数组转换</code>、<code>除</code>、<code>减</code>、<code>大于？</code> 一串纯算术节点，接在 Particle Analysis 输出之后——就是把测出来的矩形尺寸往固定比例上映射。</p>
-<p>这个做法把一个”缺陷”（只有下半部分可靠）变成了”信息”（下半部分的位置直接给出了整个车牌的下边界），是整份代码里我最满意的一处。</p>
-<p>绿牌子 VI 里还留着 <code>IMAQ ColorMatch</code>，用来在最后一步做颜色一致性校验，防止把别的绿色物块当成车牌。</p>
-<h3 id="两种方案的差异"><a href="#两种方案的差异" class="headerlink" title="两种方案的差异"></a>两种方案的差异</h3><table>
+<p>结合左右边界，就得到完整车牌框：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/green-full.png"
+                      alt="按比例补全"
+                ></p>
+<p>代码里这段是纯算术节点：从 <code>IMAQ Particle Analysis</code> 取出外接矩形的宽高，经 <code>簇至数组转换</code>、<code>索引数组</code> 拿到宽度，<code>除</code> 得高度，<code>减</code> 得顶边坐标。绿牌子 VI 里还保留了 <code>IMAQ ColorMatch</code>，在最后做一次颜色一致性校验，防止把其他绿色物块当成车牌。</p>
+<h3 id="两条链路的差异"><a href="#两条链路的差异" class="headerlink" title="两条链路的差异"></a>两条链路的差异</h3><table>
 <thead>
 <tr>
 <th></th>
@@ -675,23 +704,93 @@
 <td>尺寸比例反推</td>
 </tr>
 <tr>
-<td>关键 subVI</td>
+<td>关键节点</td>
 <td><code>IVA Shape Match 2</code></td>
 <td><code>IMAQ Particle Analysis</code></td>
 </tr>
 <tr>
-<td>输出</td>
-<td>矩形四点坐标</td>
-<td>推算出的完整矩形</td>
+<td>判别方式</td>
+<td>匹配成功即为蓝牌</td>
+<td>蓝牌匹配失败即为绿牌</td>
 </tr>
 </tbody></table>
-<p>走哪种分支由前面板上的两个绿色 LED（<code>蓝色车牌</code> &#x2F; <code>绿色车牌</code>）决定，本质是一个人工选择的开关。理想情况下应该自动判别，但实测场景里车型一眼可辨，做自动分类的收益不如把两条链路各自调稳。</p>
-<h2 id="五、字符识别"><a href="#五、字符识别" class="headerlink" title="五、字符识别"></a>五、字符识别</h2><p>OCR 部分直接用了 NI Vision 的 <code>IMAQ OCR</code>，链路是：</p>
-<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IMAQ OCR Create Session</span><br><span class="line">  → IMAQ OCR Read Character Set File (temp_super_max.abc)</span><br><span class="line">  → IMAQ OCR Read Text 3</span><br></pre></td></tr></table></figure></div>
-
-<p><code>temp_super_max.abc</code> 是训练出来的自定义字符集文件，跟着 VI 一起走（用「当前 VI 路径 → 拆分路径 → 创建路径」在运行时拼出绝对路径，所以整个文件夹可以随便挪位置）。这一步很关键：默认字符集对国内车牌字体的识别率很差，把实际车牌样本喂进去重新训练之后才有可用的准确率。</p>
-<p>失败处理上做了两级：识别不到车牌框时弹「请重新拍摄照片」，OCR 返回空串时弹「识别失败」——分开是因为这两种情况的排查方向完全不同。</p>
-<h2 id="六、测试与那组数字"><a href="#六、测试与那组数字" class="headerlink" title="六、测试与那组数字"></a>六、测试与那组数字</h2><p>测试地点选在宁波大学北区杨咏曼楼周围，下午 1:30–2:30 光照比较稳定，四个片区扫一遍，共 81 块车牌、580 个字符。</p>
+<h2 id="四、统一尺寸与灰度"><a href="#四、统一尺寸与灰度" class="headerlink" title="四、统一尺寸与灰度"></a>四、统一尺寸与灰度</h2><p>两种车牌进 OCR 之前要先统一成同一种图像。</p>
+<p>第一件事是算子的尺度问题。不同距离拍到的车牌像素尺寸差别很大，OCR 对字符大小敏感，所以先统一缩放到 <strong>200×50 像素</strong>：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/resize-vi.png"
+                      alt="缩放"
+                ></p>
+<p>第二件事是灰度。OCR 的训练集都是灰度图，但直接从 RGB 转灰度会丢掉车牌的对比度。实际测试下来，<strong>只取 RGB 中的绿色通道</strong>（<code>IMAQ ExtractSingleColorPlane</code>）能最大程度保留车牌原有颜色的对比关系：</p>
+<ul>
+<li>绿牌：底色是绿，绿色通道值高；字符是黑，值低 → 深色字、浅色底。</li>
+<li>蓝牌：底色是蓝，绿色通道值低；字符是白，值高 → 浅色字、深色底。</li>
+</ul>
+<p>两者的明暗关系刚好相反。把蓝牌整体反色，两种车牌就变成同一形态——都是深色字、浅色底，OCR 只需要一套参数。</p>
+<p>蓝牌灰度化前后：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/blue-rgb.jpg"
+                      alt="蓝牌原图"
+                ><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/blue-gray.jpg"
+                      alt="蓝牌灰度化后"
+                ></p>
+<p>绿牌灰度化前后：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/green-rgb.jpg"
+                      alt="绿牌原图"
+                ><br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/green-gray.jpg"
+                      alt="绿牌灰度化后"
+                ></p>
+<h2 id="五、OCR"><a href="#五、OCR" class="headerlink" title="五、OCR"></a>五、OCR</h2><p>OCR 用 NI Vision Assistant 的 OCR 模块，代码由 Vision Assistant 直接生成 VI。</p>
+<h3 id="字符集训练"><a href="#字符集训练" class="headerlink" title="字符集训练"></a>字符集训练</h3><p>通用 OCR 模型对车牌字体的识别率不够，需要自己训练字符集。训练库按类别组织：24 个字母类共 144 个样本、27 个省份汉字类共 162 个样本、60 个数字样本，训练结果保存为 <code>temp_super_max.abc</code>，运行时和 VI 一起加载。</p>
+<p>属性设为 <strong>Dark on Light</strong>（深色字、浅色底），和上一节反色后的图像一致：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/char-params.png"
+                      alt="字符颜色模式"
+                ></p>
+<h3 id="字符分割参数"><a href="#字符分割参数" class="headerlink" title="字符分割参数"></a>字符分割参数</h3><p>Vision Assistant 的字符分割由六个参数控制：① 字符宽度、② 字符高度、③ 最小字符间距、④⑤⑥ 像素间距参数。前三个决定分割效果。</p>
+<p>实测车牌字符宽度 10–20 像素、高度约 35 像素、字符间距约 6 像素，据此把范围放宽以避开铆钉等干扰：</p>
+<ul>
+<li>宽度 10–25 像素</li>
+<li>高度 20–40 像素</li>
+<li>最小间距 4 像素</li>
+</ul>
+<p>分割结果：</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/char-split.png"
+                      alt="字符分割"
+                ></p>
+<h3 id="自定义-ROI"><a href="#自定义-ROI" class="headerlink" title="自定义 ROI"></a>自定义 ROI</h3><p>OCR 只识别 ROI 内的区域，框选范围直接决定识别结果，所以要自己定义 ROI 结构。ROI 由四部分组成：</p>
+<ul>
+<li><code>Global Rectangle</code>：选框的绝对坐标，左上和右下两点</li>
+<li><code>ID</code>：取框内或框外</li>
+<li><code>Type</code>：选框类型，这里用矩形</li>
+<li><code>Coordinates</code>：框内的相对坐标</li>
+</ul>
+<p>把 <code>Global Rectangle</code> 和 <code>Coordinates</code> 设成相同值，ID 选框内、Type 选矩形，就等价于整幅图全选。这样识别范围严格限制在定位模块给出的车牌区域内。</p>
+<h3 id="完整的程序框图"><a href="#完整的程序框图" class="headerlink" title="完整的程序框图"></a>完整的程序框图</h3><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/labview/block-diagram.png"
+                      alt="程序框图"
+                ></p>
+<h2 id="六、测试结果"><a href="#六、测试结果" class="headerlink" title="六、测试结果"></a>六、测试结果</h2><p>测试地点在宁波大学北区杨咏曼楼周边四个片区，时间下午 1:30–2:30。手机与电脑连同一网络，一人持手机对准车牌，一人操作电脑按确认，一人录像佐证。同一块车牌只统计第一次按确认的结果。</p>
+<p>共 81 块车牌、580 个字符：</p>
 <table>
 <thead>
 <tr>
@@ -721,42 +820,24 @@
 </tr>
 <tr>
 <td>完整识别率</td>
-<td>72.84%</td>
-<td>76.47%</td>
-<td>53.85%</td>
+<td>72.84%（59&#x2F;81）</td>
+<td>76.47%（52&#x2F;68）</td>
+<td>53.85%（7&#x2F;13）</td>
 </tr>
 <tr>
 <td>字符识别率</td>
-<td>93.45%</td>
-<td>93.28%</td>
-<td>94.23%</td>
+<td>93.45%（542&#x2F;580）</td>
+<td>93.28%（444&#x2F;476）</td>
+<td>94.23%（98&#x2F;104）</td>
 </tr>
 </tbody></table>
-<p>单看字符准确率（93.45%）会觉得还行，但<strong>完整车牌识别率只有 72.84%</strong>，差了整整 20 个百分点。这个落差值得算一下。</p>
-<p>蓝牌是 7 位字符。假设每个字符独立、识别率 93.28%，那么整块全对的概率是：</p>
-<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.9328^7 ≈ 61.5%</span><br></pre></td></tr></table></figure></div>
+<p>框选准确率 100%，说明 HSL 定位这条路在测试条件下是稳的。</p>
+<p>字符识别率和完整识别率差了 20 个百分点，原因在字符数。蓝牌 7 位，绿牌 8 位，整牌全对要求每一位都对：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">蓝牌：0.9328^7 ≈ 61.5%</span><br><span class="line">绿牌：0.9423^8 ≈ 62.2%</span><br></pre></td></tr></table></figure></div>
 
-<p>实际测出来 76.47%，<strong>明显高于理论值</strong>。原因大概是 OCR 对同一张车牌上的字符并不是独立判断的——同一块车牌的字体、光照、清晰度是共享的，一个字符能认对，旁边的通常也能，误差实际上正相关。这对系统是好事。</p>
-<p>绿牌是 <strong>8 位</strong>字符（新能源车牌多一位）。同样算：</p>
-<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.9423^8 ≈ 62.2%</span><br></pre></td></tr></table></figure></div>
-
-<p>实际测出来只有 53.85%，<strong>低于理论值</strong>。</p>
-<p>这就解释了绿牌完整识别率为什么难看：它的单字符准确率其实更高（94.23% &gt; 93.28%），但字符多一位，误差累积更狠；再加上样本只有 13 块，一两块失手就能让比率大幅波动。样本量小是这份数据最实在的短板——它反映的是校园里新能源车的真实占比，但也意味着这个 53.85% 的置信区间相当宽。</p>
-<h2 id="七、踩过的坑"><a href="#七、踩过的坑" class="headerlink" title="七、踩过的坑"></a>七、踩过的坑</h2><p><strong>1. LabVIEW 的数据流不是顺序执行</strong></p>
-<p>最初把「抓帧 → 定位 → OCR」直接串在 While 循环里，结果 OCR 经常拿到上一帧的结果。LabVIEW 按数据依赖调度，两条没有连线的分支谁先跑是不确定的。最后用 Flat Sequence 强制了顺序，同时在关键节点之间用 error 簇串起来——这算是 LabVIEW 里最朴素的”加个大括号”。</p>
-<p><strong>2. 全局变量用多了会失控</strong></p>
-<p><code>Image Out 2/3/4</code> 这类图像在多个子 VI 之间靠全局变量传递，写起来方便，但调试时完全看不出数据流。后来在关键位置插了 <code>Overlay Rectangle</code>，把中间结果直接画出来看，才定位到绿牌的分割阈值在高光区域会失效。</p>
-<p><strong>3. 调缩放比调算法更重要</strong></p>
-<p>前面板上有 <code>X Resolution / Y Resolution</code>，把输入帧缩到 1080×720。一开始以为这是为了省算力，实际调下来发现<strong>缩放本身就在做低通滤波</strong>，反而让形态学结果更稳定——原图的高频噪声会让连通域碎成一地。</p>
-<h2 id="八、如果重做"><a href="#八、如果重做" class="headerlink" title="八、如果重做"></a>八、如果重做</h2><p>按现在的能力，有几步会换掉：</p>
-<ol>
-<li><strong>定位用检测器替代手调阈值</strong>。两条链路各自调参的成本很高，换环境就得重调。一个轻量检测模型（甚至模板匹配 + 更强的先验）能省掉大部分维护工作。</li>
-<li><strong>自动判别车牌类型</strong>，而不是让人点 LED。</li>
-<li><strong>把”完整识别率”设为主指标</strong>。单字符 93% 听着体面，但落到业务上是每四辆车就有一辆要人工复核——这才是真正决定系统能不能用的数字。</li>
-<li><strong>测试集要分层</strong>。81 块车牌里只有 13 块绿牌，且全在同一时段、同一片区域、同一光照。夜间、雨天、大角度倾斜一个都没覆盖，所以 72.84% 这个数字的适用范围其实很窄。</li>
-</ol>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这个项目的技术含量不在算法有多复杂，而在于<strong>在工具链的约束下把事情做成</strong>：没有检测模型，就用渐变的方向性做定位；没有工业相机，就把手机变成网络摄像头；OCR 通用模型不行，就自己训练字符集。</p>
-<p>局限也很清楚——阈值和比例都是靠人工调出来的经验值，换个光照条件就要重新标定。这一点在测试数据的分层缺失上已经埋了伏笔。</p>
+<p>蓝牌实测 76.47%，高于理论值。同一块车牌的字体、光照、清晰度是共享的，识别结果正相关，不是独立事件。绿牌实测 53.85%，低于理论值，主要原因是样本只有 13 块，一两块失手就会明显拉低比率。</p>
+<h2 id="七、适用范围"><a href="#七、适用范围" class="headerlink" title="七、适用范围"></a>七、适用范围</h2><p>这套方法依赖两个前提：光照充足、拍摄角度接近正面。测试全部在下午晴天进行，夜间、逆光、大角度倾斜没有覆盖。绿牌样本 13 块，且集中在同一时段同一区域，53.85% 这个数字的置信区间很宽。</p>
+<p>继续往下做的话，有三个方向：用霍夫变换做倾斜校正，把倾斜车牌拉正再识别；用灰度直方图找双峰动态设定二值化阈值，处理积灰或饱和度偏低的车牌；扩充不同光照条件下的训练样本。</p>
 
 		</div>
 
@@ -764,14 +845,14 @@
 		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
 			<div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> 用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块</li>
+        <li><strong>Title:</strong> LabVIEW车牌识别</li>
         <li><strong>Author:</strong> 忘川</li>
         <li><strong>Created at
                 :</strong> 2026-10-23 11:00:00</li>
         
             <li>
                 <strong>Updated at
-                    :</strong> 2026-10-23 10:43:31
+                    :</strong> 2026-10-23 10:57:37
             </li>
         
         <li>
@@ -973,8 +1054,8 @@
 		<div class="post-toc-wrap">
 	<div class="post-toc">
 		<div class="toc-title">On this page</div>
-		<div class="page-title">用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BB%BF%E8%89%B2%E8%BD%A6%E7%89%8C%E6%98%AF%E4%B8%AA%E9%BA%BB%E7%83%A6"><span class="nav-text">一、为什么绿色车牌是个麻烦</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-text">二、整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%9B%BE%E5%83%8F%E9%87%87%E9%9B%86%EF%BC%9A%E6%8B%BF%E6%89%8B%E6%9C%BA%E5%BD%93%E7%BD%91%E7%BB%9C%E6%91%84%E5%83%8F%E5%A4%B4"><span class="nav-text">三、图像采集：拿手机当网络摄像头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BD%A6%E7%89%8C%E5%AE%9A%E4%BD%8D%EF%BC%9A%E4%B8%A4%E6%9D%A1%E4%B8%8D%E5%90%8C%E7%9A%84%E8%B7%AF"><span class="nav-text">四、车牌定位：两条不同的路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%93%9D%E7%89%8C%EF%BC%9A%E9%A2%9C%E8%89%B2%E9%98%88%E5%80%BC-%E5%BD%A2%E7%8A%B6%E5%8C%B9%E9%85%8D"><span class="nav-text">蓝牌：颜色阈值 + 形状匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%BF%E7%89%8C%EF%BC%9A%E5%8F%AA%E7%94%A8%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%88%86%E5%8F%8D%E6%8E%A8%E6%95%B4%E4%B8%AA%E8%BD%A6%E7%89%8C"><span class="nav-text">绿牌：只用下半部分反推整个车牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-text">两种方案的差异</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB"><span class="nav-text">五、字符识别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%B5%8B%E8%AF%95%E4%B8%8E%E9%82%A3%E7%BB%84%E6%95%B0%E5%AD%97"><span class="nav-text">六、测试与那组数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-text">七、踩过的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%A6%82%E6%9E%9C%E9%87%8D%E5%81%9A"><span class="nav-text">八、如果重做</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">小结</span></a></li></ol>
+		<div class="page-title">LabVIEW车牌识别</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-text">一、整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9B%BE%E5%83%8F%E9%87%87%E9%9B%86"><span class="nav-text">二、图像采集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%BD%A6%E7%89%8C%E5%AE%9A%E4%BD%8D"><span class="nav-text">三、车牌定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E9%80%89%E6%8B%A9"><span class="nav-text">方案选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%93%9D%E7%89%8C%EF%BC%9A%E9%98%88%E5%80%BC%E5%88%86%E5%89%B2-%E5%BD%A2%E7%8A%B6%E5%8C%B9%E9%85%8D"><span class="nav-text">蓝牌：阈值分割 + 形状匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%BF%E7%89%8C%EF%BC%9A%E5%8F%96%E4%B8%8B%E5%8D%8A%E6%AE%B5%EF%BC%8C%E6%8C%89%E6%AF%94%E4%BE%8B%E8%A1%A5%E5%85%A8"><span class="nav-text">绿牌：取下半段，按比例补全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E6%9D%A1%E9%93%BE%E8%B7%AF%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-text">两条链路的差异</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BB%9F%E4%B8%80%E5%B0%BA%E5%AF%B8%E4%B8%8E%E7%81%B0%E5%BA%A6"><span class="nav-text">四、统一尺寸与灰度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81OCR"><span class="nav-text">五、OCR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E9%9B%86%E8%AE%AD%E7%BB%83"><span class="nav-text">字符集训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E5%88%86%E5%89%B2%E5%8F%82%E6%95%B0"><span class="nav-text">字符分割参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-ROI"><span class="nav-text">自定义 ROI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E7%A8%8B%E5%BA%8F%E6%A1%86%E5%9B%BE"><span class="nav-text">完整的程序框图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="nav-text">六、测试结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-text">七、适用范围</span></a></li></ol>
 
 	</div>
 </div>

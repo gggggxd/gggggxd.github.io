@@ -606,18 +606,15 @@
                 <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
                     <h3 class="home-article-title">
                         <a href="/2026/10/23/labview-plate-recognition/">
-                            用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块
+                            LabVIEW车牌识别
                         </a>
                     </h3>
 
                     <div class="home-article-content markdown-body">
                         
                             
-                            项目做完有一阵了，LabVIEW 也早就从这台机器上卸掉，程序跑不起来，但设计上的取舍还值得记一笔。这篇不复述说明书，只讲当时为什么这么做、哪里踩了坑、以及那组准确率数字背后的真实原因。
-一、为什么绿色车牌是个麻烦蓝色车牌是单一底色，取色相阈值一刀切下去，车牌子区域就出来了。新能源绿牌不是——它是从白到绿的渐变，同一个车牌上不同位置的白平衡、亮度都不一样。
-这带来两个直接后果：
-
-用单一 H...
+                            用 LabVIEW 2020 + NI Vision Assistant 2020 做一套车牌识别。输入是手机摄像头的实时画面，输出是车牌字符串。整套流程分三段：采集、定位、识别。定位这一段的难点在新能源绿牌——它的底色是从白到绿的渐变，单一颜色阈值切不出完整车牌。下面按技术路线逐段说明。
+一、整体结构主程序 main.vi 用一个 While 循环跑整个流程，三个模块各自封装成独立 VI：...
                         
                     </div>
 
@@ -682,7 +679,7 @@
         
     </div>
 
-    <a href="/2026/10/23/labview-plate-recognition/">Read more<span class="seo-reader-text">用 LabVIEW 做车牌识别：从手机摄像头到 OCR 的三个模块</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+    <a href="/2026/10/23/labview-plate-recognition/">Read more<span class="seo-reader-text">LabVIEW车牌识别</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
                 </div>
