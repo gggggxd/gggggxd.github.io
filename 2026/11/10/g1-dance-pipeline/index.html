@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    
+    <meta name="author" content="忘川">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://gggggxd.github.io/2026/11/10/g1-dance-pipeline/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从一段舞蹈视频到 G1 跳舞：GVHMR + GMR + SuperMimic 全链路实践">
+<meta property="og:url" content="https://gggggxd.github.io/2026/11/10/g1-dance-pipeline/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gggggxd.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-11-10T08:55:00.000Z">
+<meta property="article:modified_time" content="2026-11-10T12:06:47.547Z">
+<meta property="article:author" content="忘川">
+<meta property="article:tag" content="MuJoCo">
+<meta property="article:tag" content="Unitree G1">
+<meta property="article:tag" content="人形机器人">
+<meta property="article:tag" content="动作捕捉">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="运动重定向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gggggxd.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/dd.ico" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/dd.ico">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/dd.ico">
+    <!--- Page Info-->
+    
+    <title>
+        
+            从一段舞蹈视频到 G1 跳舞：GVHMR + GMR + SuperMimic 全链路实践 | gggggxd
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"gggggxd.github.io","root":"/","language":"en","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Sans SC","url":"https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"This is gggggxd","subtitle":{"text":["just keep on"],"hitokoto":{"enable":true,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"style":"default","links":[],"qrs":[]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"文章":{"path":"/archives","icon":"fa-regular fa-archive"},"分类":{"path":"/categories","icon":"fa-regular fa-folder"},"标签":{"path":"/tags","icon":"fa-regular fa-tags"},"Links":{"icon":"fa-regular fa-link","submenus":{"杂七杂八":"/links","GitHub":"https://github.com/gggggxd"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2026/1/12 22:00:00","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2026/1/12 22:00:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.i18n = {"search":"Search...","toc":"On this page","prev":"Prev","next":"Next","prev_posts":"Prev posts","next_posts":"Next posts","page":"Page %d","recent_posts":"Recent Posts","share":"Share","powered_by":"POWERED BY %s","theme":"THEME","rss_feed":"RSS Feed","category":"Category","categories":"Categories","tag":"Tag","tags":"Tags","post":"Post","posts":"Posts","tagcloud":"Tag Cloud","comment":"Comment","comments":"Comments","home":"Home","archive":"Archive","archives":"Archives","top":"TOP","sticky":"Sticky","go-back-home":"Go Back Home","masonry_loading":"Loading photos...","image_viewer":"Image viewer","close":"Close","exif":{"title":"EXIF","cards":{"camera":"Camera","lens":"Lens","exposure":"Exposure","other":"Other"},"fields":{"make":"Brand","model":"Model","date_taken":"Date taken","lens_model":"Lens","focal_length":"Focal length","focus_mode":"Focus mode","shutter":"Shutter","aperture":"Aperture","iso":"ISO","exposure_program":"Exposure program","exposure_compensation":"Exposure compensation","metering_mode":"Metering mode","flash":"Flash","white_balance":"White balance","latitude":"Latitude","longitude":"Longitude","altitude":"Altitude"},"status":{"loading":"Loading...","no_exif":"No EXIF available","library_missing":"EXIF library not loaded","image_source_missing":"Image source unavailable","unavailable":"EXIF unavailable (blocked by CORS or missing metadata)","flag_unavailable":"EXIF unavailable"}},"about":"About","changelog":"Changelog","links":"Links","link":"Link","friends":"Friends","friend":"Friend","timeline":"Timeline","shuoshuo":"Shuoshuo","bookmarks":"Bookmarks","site_uv":"VISITOR COUNT","site_pv":"TOTAL PAGE VIEWS","read_more":"Read more","wordcount":"Words","min2read":"Mins","status":"Status","runtime":"Blog up for","days":"days","hours":"hrs","minutes":"Min","seconds":"Sec","optimized_by":"and Optimized by Evan","rights":"All Rights Reserved","site_posts":"%s posts in total","site_wordcount":"%s words in total","copyright":{"author":"Author","title":"Title","link":"Link","create_time":"Created at","update_time":"Updated at","license_title":"License","license_content":"This work is licensed under %s.","all_rights_reserved":"All Rights Reserved &#169; %s","public_domain":"This work is in the public domain."},"ago":{"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"},"create_time":"Created","update_time":"Updated","expired":"This post is written %s days ago, and the content may not be up to date."};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<!-- hexo injector head_end start --><style>
+blockquote { overflow-x: auto; }
+blockquote > table { width: max-content; min-width: 100%; }
+blockquote > table th,
+blockquote > table td { padding: 0.3em 0.7em; white-space: nowrap; }
+</style><!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                gggggxd
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    文章
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/tags"
+                                        >
+                                    <i class="fa-regular fa-tags fa-fw"></i>
+                                    标签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-link fa-fw"></i>
+                                    LINKS
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/links">
+                                                    杂七杂八
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/gggggxd">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                文章
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/tags"
+                        >
+                            <span>
+                                标签
+                            </span>
+                            
+                                <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-Links"
+                        >
+                            <span>
+                                LINKS
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-Links">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/links">杂七杂八</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/gggggxd">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">16</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">54</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">从一段舞蹈视频到 G1 跳舞：GVHMR + GMR + SuperMimic 全链路实践</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/images/blog.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">忘川</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-11-10 16:55</span>
+        <span class="mobile">2026-11-10 16:55</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-11-10 20:06:47</span>
+            <span class="mobile">2026-11-10 20:06:47</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a>&nbsp;
+                        </li>
+                    
+                    
+                
+                    
+                        
+                            <li>></li>
+                        
+                        <li>
+                            <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E4%BA%BA%E5%BD%A2%E6%9C%BA%E5%99%A8%E4%BA%BA/">人形机器人</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E5%8A%A8%E4%BD%9C%E6%8D%95%E6%8D%89/">动作捕捉</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E8%BF%90%E5%8A%A8%E9%87%8D%E5%AE%9A%E5%90%91/">运动重定向</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Unitree-G1/">Unitree G1</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/MuJoCo/">MuJoCo</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>输入是一段 23.17 秒的舞蹈视频，固定机位、1280×720@30，舞者手里拿着篮球。输出是 Unitree G1 29-DoF 在 MuJoCo 里把其中两段舞跳完：动捕用 GVHMR，重定向用 GMR，策略训练用 SuperMimic，中间加了两层地面修正和一段过渡帧处理。</p>
+<h2 id="先看结果"><a href="#先看结果" class="headerlink" title="先看结果"></a>先看结果</h2><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/source-dance.gif"
+                      alt="原视频节选"
+                ></p>
+<p><em>原视频节选：dance_A（7.5–15.0 s）接 dance_B（15.0–22.0 s），共 14.5 秒。画面水印为原视频作者。</em></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/policy-vs-ref.gif"
+                      alt="策略 vs 参考动作"
+                ></p>
+<p><em>训练结果：蓝色实体是仿真中的策略，灰色半透明是参考动作；画面左上角是当前 clip、normalized return 和时间。</em></p>
+<p>两段各约 9 秒的动作，按 Appendix F 的确定性协议回放，normalized return <strong>0.8525</strong>，零失败；训练 3 小时，显卡是 RTX 5060 Ti 16 GB。</p>
+<p>先把边界说清楚：只做到仿真，没有 ONNX 导出和真机部署；篮球没有建模，手臂动作按无球近似；原视频 22.8 秒处的单腿跳没有剪进任何片段。所以这不是“训练一个通用跳舞策略”，而是把一条从视频到机器人控制策略的链路完整跑通，并记录每一层的误差和返工。源视频是 B 站公开舞蹈视频（画面水印：小星Caze），这里只截取片段做链路验证。</p>
+<h2 id="一、整体链路"><a href="#一、整体链路" class="headerlink" title="一、整体链路"></a>一、整体链路</h2><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/pipeline.png"
+                      alt="g1_dance 全链路"
+                ></p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>工具</th>
+<th>输入 → 输出</th>
+<th>关键结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>动捕</td>
+<td>GVHMR</td>
+<td>视频 → SMPL-X 世界坐标参数</td>
+<td>7 秒片段推理 0.63 s，全身可见 100%</td>
+</tr>
+<tr>
+<td>重定向</td>
+<td>GMR</td>
+<td>SMPL-X → G1 根位姿 + 29 维关节角</td>
+<td>0 帧穿地 &gt;2 cm，0 帧关节超限</td>
+</tr>
+<tr>
+<td>地面修正</td>
+<td>自己写的两个脚本</td>
+<td>人体&#x2F;机器人分别做慢变垂直偏移</td>
+<td>脚底高度中位数 1.60 &#x2F; 1.09 cm</td>
+</tr>
+<tr>
+<td>数据整形</td>
+<td>pad_clip + csv_to_npz</td>
+<td>30 Hz CSV → 50 Hz npz</td>
+<td>472 &#x2F; 447 帧，前后各 30 帧站立过渡</td>
+</tr>
+<tr>
+<td>训练</td>
+<td>SuperMimic-Reproduced</td>
+<td>动作库 → 策略检查点</td>
+<td>1024 envs，3 h，21000 迭代</td>
+</tr>
+<tr>
+<td>评测</td>
+<td>MuJoCo Warp</td>
+<td>检查点 → Appendix F 指标</td>
+<td>return 0.8525，失败 0&#x2F;2</td>
+</tr>
+</tbody></table>
+<p>这条链路里，三个模型本身都是现成的，真正花时间的是接口：坐标系、单位、帧率、四元数顺序、脚底定义。下面按阶段拆。</p>
+<h2 id="二、单目动捕：GVHMR"><a href="#二、单目动捕：GVHMR" class="headerlink" title="二、单目动捕：GVHMR"></a>二、单目动捕：GVHMR</h2><p>原视频切两段：</p>
+<table>
+<thead>
+<tr>
+<th>片段</th>
+<th>时间区间</th>
+<th>帧数</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dance_A</td>
+<td>7.5–15.0 s</td>
+<td>225 帧 @30</td>
+<td>运球、转身、脚步变化</td>
+</tr>
+<tr>
+<td>dance_B</td>
+<td>15.0–22.0 s</td>
+<td>210 帧 @30</td>
+<td>抬腿、绕球、较大幅度摆臂</td>
+</tr>
+</tbody></table>
+<p>GVHMR 做的是从单目视频恢复世界坐标下的人体运动。它把人体放在重力-视角坐标系里估计，输出的是 SMPL-X 的全局参数，而不是相机坐标系里的姿态。这里的机位是固定的，所以推理时加 <code>-s</code> 跳过视觉里程计：相机不动，就没必要让 VO 把背景的轻微抖动带进人体轨迹。</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scripts/run_gvhmr.sh A</span><br><span class="line">scripts/run_gvhmr.sh B</span><br></pre></td></tr></table></figure></div>
+
+<p>两段的 HMR4D 推理都只要 0.63 秒（7 秒片段）。真正占时间的是前面的预处理：YOLO 检测、ViTPose 关键点、ViT 特征。</p>
+<p>动捕结果做了一轮量化质检：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>dance_A</th>
+<th>dance_B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全身可见帧</td>
+<td>100%</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>脚未出画</td>
+<td>100%</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>root 平移步长中位数</td>
+<td>1.84 cm&#x2F;帧</td>
+<td>1.41 cm&#x2F;帧</td>
+</tr>
+<tr>
+<td>root 平移步长最大</td>
+<td>5.66 cm</td>
+<td>6.38 cm</td>
+</tr>
+<tr>
+<td>水平方向总位移</td>
+<td>0.583 m</td>
+<td>0.289 m</td>
+</tr>
+</tbody></table>
+<p>轴角 <code>global_orient</code> 里出现了 6.27 rad 的帧间“跳变”。一开始以为是姿态翻转，后来确认是 2π 表示绕回：把轴角转成旋转矩阵，跳变就消失了。这类数值表示问题如果不看原始量，很容易误判成动捕失败。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/hmr-overlay.gif"
+                      alt="GVHMR 动捕叠加质检"
+                ></p>
+<p>叠加视频没有用 GVHMR 自带的 pytorch3d 渲染。原因很实际：官方 wheel 只到 torch 2.3，而这台 5060 Ti 是 sm_120，只能用 torch 2.8；pytorch3d 最后源码编译了 CPU 版，CPU 光栅化大约 22 秒一帧，不可用。于是改用 OpenCV 把 SMPL-X 顶点按相机内参投影回原视频，三角形按深度分 24 层、从远到近填充，再做半透明叠加。渲染不是链路必需环节，<code>hmr4d_results.pt</code> 在渲染前就已经保存，所以这个替代不影响后面的重定向。</p>
+<p>另外，原视频里舞者在运球，手部经常被球遮挡。GVHMR 对手部的估计只能算“没有明显穿帮”，手臂动作按无球近似处理，这也是后面不建模篮球的原因之一。</p>
+<h2 id="三、重定向：GMR"><a href="#三、重定向：GMR" class="headerlink" title="三、重定向：GMR"></a>三、重定向：GMR</h2><p>GMR 用 IK 把人体关节对齐到机器人 link 上。对 G1，它输出 <code>root_pos</code>（3 维）、<code>root_rot</code>（4 维，xyzw）、<code>dof_pos</code>（29 维），转成 CSV 是 36 列、30 fps。</p>
+<p>格式先逐项核对，再谈动作质量：</p>
+<ul>
+<li>关节顺序：左腿 6 → 右腿 6 → 腰 3 → 左臂 7 → 右臂 7，和 SuperMimic 的 <code>G1_JOINT_NAMES</code> 一致；</li>
+<li>四元数顺序是 xyzw，模长为 1；</li>
+<li>根位置单位是米，关节角是弧度。</li>
+</ul>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/retarget-ref-A.jpg"
+                      alt="GMR 重定向后的机器人参考动作"
+                ></p>
+<p>直接跑 GMR，动作本身是对的，但机器人整体浮空：脚底离地中位数 7.6 cm（A）&#x2F; 14.8 cm（B），最高到 23 cm。原因有两层：</p>
+<ol>
+<li><strong>单目重建的垂直漂移</strong>。GVHMR 的人体网格最低点会从 0 慢慢漂到 +24 cm，但舞者其实一直踩在地上。固定机位、单目深度，这种尺度&#x2F;平移漂移很典型。</li>
+<li><strong>GMR 对齐的是踝关节</strong>。人的踝到脚底大约 8 cm，G1 只有约 3 cm。即使人体网格完全贴地，重定向后的机器人脚底仍然会浮 5 cm 左右。</li>
+</ol>
+<p>所以不能简单给 root 加一个常数偏移。加常数只能修掉某一帧的浮空，修不掉随时间变化的漂移，还会把抬脚动作一起压掉。</p>
+<h2 id="四、地面锁定：这次链路里最实质的工程问题"><a href="#四、地面锁定：这次链路里最实质的工程问题" class="headerlink" title="四、地面锁定：这次链路里最实质的工程问题"></a>四、地面锁定：这次链路里最实质的工程问题</h2><p>处理分两层，思路一样：估计一个<strong>慢变的垂直偏移</strong>，从根位置里减掉；短时间的抬脚、腾空保留。</p>
+<h3 id="4-1-对人体：2-秒滚动最小值"><a href="#4-1-对人体：2-秒滚动最小值" class="headerlink" title="4.1 对人体：2 秒滚动最小值"></a>4.1 对人体：2 秒滚动最小值</h3><p>对每一帧，取 SMPL-X 网格所有顶点的最低 z，作为“人体最低点”：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">low[t]    = min_vertex_z(t)</span><br><span class="line">roll[t]   = min(low[t - w/2 : t + w/2])     # w = 61 帧 ≈ 2 s</span><br><span class="line">offset[t] = max(moving_average(roll)[t], 0)</span><br><span class="line">transl_y[t] -= offset[t]</span><br></pre></td></tr></table></figure></div>
+
+<p>滚动最小值的前提是：任意 2 秒窗口里，至少有一只脚应该踩在地上。最低点因此可以代表地面，再平滑掉单帧噪声，就得到一条慢变偏移曲线。<code>max(offset, 0)</code> 是为了只往下修，不把动作整体抬高。</p>
+<p>脚本在 <code>scripts/ground_lock.py</code>。它只改 <code>smpl_params_global.transl</code> 的 y，不改 <code>smpl_params_incam.transl</code>——相机坐标里的“竖直”不等于世界坐标的 up，改了反而会把动作拧掉。</p>
+<h3 id="4-2-对机器人：0-5-秒滚动最小值"><a href="#4-2-对机器人：0-5-秒滚动最小值" class="headerlink" title="4.2 对机器人：0.5 秒滚动最小值"></a>4.2 对机器人：0.5 秒滚动最小值</h3><p>人体贴地之后，机器人还会因为踝-脚底长度差浮 5 cm。于是对 G1 自己的脚底再做一次同样的处理：</p>
+<ul>
+<li>用 MuJoCo 加载 G1 的 MJCF，对每帧做前向运动学；</li>
+<li>取左右脚踝 roll link 上几何体（球体）的最低点；</li>
+<li>滚动最小值窗口缩到 0.5 秒，因为机器人每步都有支撑脚，窗口短才能跟上快速换脚；</li>
+<li>平滑后从 <code>root_pos</code> 的 z 里减掉。</li>
+</ul>
+<p>脚本在 <code>scripts/robot_ground_lock.py</code>。这里用的是 G1 自己的几何，不是人的脚，所以踝-脚底长度差被真正消掉了。</p>
+<h3 id="4-3-修正后的指标"><a href="#4-3-修正后的指标" class="headerlink" title="4.3 修正后的指标"></a>4.3 修正后的指标</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>dance_A</th>
+<th>dance_B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>穿地 &gt;2 cm 帧数</td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>脚底高度中位数</td>
+<td>1.60 cm</td>
+<td>1.09 cm</td>
+</tr>
+<tr>
+<td>最长悬空</td>
+<td>0.43 s</td>
+<td>0.70 s</td>
+</tr>
+<tr>
+<td>关节超限帧数</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>root 速度中位数</td>
+<td>0.48 m&#x2F;s</td>
+<td>0.36 m&#x2F;s</td>
+</tr>
+</tbody></table>
+<p>B 的 0.70 秒悬空对应原视频里的抬腿动作，不是脚底修正失败；A 的 0.43 秒没有对应异常，仍在可接受范围。如果追求更严格的接触一致性，可以回 GMR 调 IK 的足部权重，或者用 SMPL 的 neutral 模型重跑，但这次判断它属于真实动作，没有继续压。</p>
+<p>原始重定向结果全部保留，修正后的文件单独存 <code>data/retarget/final/</code>，随时可以回退对比。</p>
+<h2 id="五、过渡帧与-50-Hz-数据"><a href="#五、过渡帧与-50-Hz-数据" class="headerlink" title="五、过渡帧与 50 Hz 数据"></a>五、过渡帧与 50 Hz 数据</h2><p>重定向出来的动作从舞蹈中间开始、到舞蹈中间结束。策略训练和评测都希望机器人从站立姿态进入、再回到站立姿态，否则第一帧就是半蹲，reset 分布和评测起点会对不上。</p>
+<p><code>scripts/pad_clip.py</code> 在每段前后各加 30 帧站立姿态：</p>
+<ul>
+<li>关节角全零，根 xy 沿用片段首&#x2F;尾的位置，yaw 取单位四元数；</li>
+<li>站立高度不手填，用前向运动学二分求解，使最低脚面正好落在 z&#x3D;0；</li>
+<li>位置和关节角线性插值，根四元数用 slerp；</li>
+<li>30 Hz 下，dance_A 从 225 帧变 284 帧，dance_B 从 210 帧变 269 帧。</li>
+</ul>
+<p>然后 <code>csv_to_npz_batch.py</code> 把 30 Hz CSV 转成 50 Hz npz：</p>
+<table>
+<thead>
+<tr>
+<th>片段</th>
+<th>30 Hz 帧数</th>
+<th>50 Hz 帧数</th>
+<th>时长</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dance_A</td>
+<td>284</td>
+<td>472</td>
+<td>9.44 s</td>
+</tr>
+<tr>
+<td>dance_B</td>
+<td>269</td>
+<td>447</td>
+<td>8.94 s</td>
+</tr>
+</tbody></table>
+<p>这一步看起来只是格式转换，但它决定了训练时 reset 的初始状态分布。过渡帧不是“装饰”，是让训练分布和评测协议对齐的一部分。</p>
+<h2 id="六、训练：SuperMimic"><a href="#六、训练：SuperMimic" class="headerlink" title="六、训练：SuperMimic"></a>六、训练：SuperMimic</h2><p>训练侧用的是 <code>SuperMimic-Reproduced</code>，一个社区按论文从零复现的仓库，不是官方代码。它的核心不是 PPO，而是一个可微世界模型：先在想象 rollouts 上做 BPTT 更新 actor，critic 用 TD(λ)，动作库通过基于回报的重置采样来选片段。</p>
+<p>这次没有改算法，只按仓库默认超参跑：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>环境数</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>batch size</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>想象 horizon</td>
+<td>H &#x3D; 32</td>
+</tr>
+<tr>
+<td>UTD</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>训练时长</td>
+<td>3.00 h</td>
+</tr>
+<tr>
+<td>迭代数</td>
+<td>21,000（约 2.0 it&#x2F;s）</td>
+</tr>
+<tr>
+<td>显存峰值</td>
+<td>约 7 GB &#x2F; 16 GB</td>
+</tr>
+<tr>
+<td>动作库</td>
+<td>2 clips &#x2F; 919 帧 @50 Hz</td>
+</tr>
+</tbody></table>
+<p>训练末期的指标：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>world-model nse1</td>
+<td>0.0051</td>
+</tr>
+<tr>
+<td>world-model nse8</td>
+<td>0.0073（论文 0.007–0.011）</td>
+</tr>
+<tr>
+<td>train return</td>
+<td>0.822</td>
+</tr>
+<tr>
+<td>imagination return</td>
+<td>2.713</td>
+</tr>
+<tr>
+<td>survival</td>
+<td>1.000</td>
+</tr>
+</tbody></table>
+<p>world-model 的 8 步开环误差已经进入论文区间，但 3 小时只是预算上限，不是收敛点：学习率的余弦衰减还没走完。按仓库经验，延长到 8–10 小时，或者加 <code>--env.anchor-obs</code>，还有继续压的空间。</p>
+<h2 id="七、评测：0-8525，零失败"><a href="#七、评测：0-8525，零失败" class="headerlink" title="七、评测：0.8525，零失败"></a>七、评测：0.8525，零失败</h2><p>评测按论文 Appendix F：每条 clip 从第一帧开始，确定性策略，不加噪声、不做域随机化；normalized return 定义为</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">normalized return = Σ step reward / (0.1 × steps)</span><br></pre></td></tr></table></figure></div>
+
+<p>1.0 是完美跟踪；训练里的 termination 一旦触发，这条 clip 就算失败。</p>
+<table>
+<thead>
+<tr>
+<th>片段</th>
+<th>帧数</th>
+<th>normalized return</th>
+<th>是否失败</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dance_A</td>
+<td>472</td>
+<td>0.897</td>
+<td>否（472&#x2F;472 步跑完）</td>
+</tr>
+<tr>
+<td>dance_B</td>
+<td>447</td>
+<td>0.808</td>
+<td>否（447&#x2F;447 步跑完）</td>
+</tr>
+<tr>
+<td><strong>平均</strong></td>
+<td>—</td>
+<td><strong>0.8525</strong></td>
+<td><strong>0 &#x2F; 2</strong></td>
+</tr>
+</tbody></table>
+<p>作为量级参考：仓库 README 里 LAFAN1 整段（100–300 s）单卡 3 小时约 0.56–0.59，BONES-SEED 短片段全量 7.1 小时 &#x2F; 4×5090 是 0.93。我们这两段约 9 秒、带 30 帧过渡，0.85 落在两者之间；但评测集不同，不能直接横向比较，只能说明“这个量级是合理的”。</p>
+<p>开头那段对比就是这两条 clip 的完整回放。除了回报，还统计了脚滑和 root 漂移：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>dance_A</th>
+<th>dance_B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>脚滑（接触期平均）</td>
+<td>0.307 m&#x2F;s</td>
+<td>0.169 m&#x2F;s</td>
+</tr>
+<tr>
+<td>root 漂移 平均 &#x2F; 最大 &#x2F; 最终</td>
+<td>3.7 &#x2F; 10.4 &#x2F; 3.5 cm</td>
+<td>6.8 &#x2F; 14.8 &#x2F; 8.7 cm</td>
+</tr>
+<tr>
+<td>策略脚底最低点</td>
+<td>-1.15 cm</td>
+<td>-1.27 cm</td>
+</tr>
+<tr>
+<td>参考动作脚底最低点</td>
+<td>-4.14 cm</td>
+<td>-0.75 cm</td>
+</tr>
+</tbody></table>
+<p>A 的跟踪明显更稳；B 的平均 root 漂移 6.8 cm，是 A 的近两倍，和 B 段抬腿、单脚支撑更多有关。这也解释了为什么 B 的回报低 0.09。后续如果继续做，B 是优先项：延长训练、调 GMR 的足部权重，或者加 anchor 观测。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/policy-A-sheet.jpg"
+                      alt="Dance A 策略回放分解"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/g1_dance/policy-B-sheet.jpg"
+                      alt="Dance B 策略回放分解"
+                ></p>
+<h2 id="八、踩过的环境坑"><a href="#八、踩过的环境坑" class="headerlink" title="八、踩过的环境坑"></a>八、踩过的环境坑</h2><p>这部分不影响算法，但会直接决定能不能在一台 16 GB 消费级显卡上把链路跑起来。完整记录在 <code>reports/REPORT.md</code>，这里挑影响最大的几条：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GVHMR 官方 pin 的 torch 版本不支持 5060 Ti 的 sm_120</td>
+<td>换 torch 2.8.0+cu128，三个环境互相隔离</td>
+</tr>
+<tr>
+<td>pytorch3d 官方 wheel 只到 torch 2.3，pip 的 <code>cuda_nvcc</code> 又不含 nvcc</td>
+<td>源码编译 CPU 版 0.7.9；渲染改用 OpenCV 投影</td>
+</tr>
+<tr>
+<td>torch 2.8 默认 <code>weights_only=True</code>，挡住 ultralytics 权重</td>
+<td>跑 GVHMR 时设 <code>TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1</code></td>
+</tr>
+<tr>
+<td>chumpy 依赖 numpy&lt;1.24（用了 <code>numpy.bool</code>）</td>
+<td>GVHMR 环境固定 numpy 1.23.5</td>
+</tr>
+<tr>
+<td>uv 单连接下载，代理按连接限速 45 KB&#x2F;s</td>
+<td>导出 lock，12 路并行 <code>pip download</code>，172 个 wheel &#x2F; 3.3 GB，离线安装</td>
+</tr>
+<tr>
+<td>uv 留下 876 个僵尸锁，重试空转数小时</td>
+<td>清锁后重新同步</td>
+</tr>
+<tr>
+<td>SMPL-X 官方包不含 SMPL；v1.1.0 的 neutral 一度下载中断</td>
+<td>先用 v1.0.0 的 male 顶替，后来确认 v1.1.0 完整（330,607,275 字节）并替换为真正的 neutral</td>
+</tr>
+<tr>
+<td>下载器三个 bug：分块按字典序拼装、超时丢字节、漏 <code>-L</code></td>
+<td>修复后加 12 分块 md5 回归测试，已下的坏包重下</td>
+</tr>
+</tbody></table>
+<p>环境上最后是三个 venv：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>Python</th>
+<th>关键依赖</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GVHMR</td>
+<td>3.10</td>
+<td>torch 2.8.0+cu128，pytorch3d 0.7.9（CPU），numpy 1.23.5</td>
+</tr>
+<tr>
+<td>GMR</td>
+<td>3.10</td>
+<td>torch 2.8.0，mujoco，mink</td>
+</tr>
+<tr>
+<td>SuperMimic</td>
+<td>3.12</td>
+<td>torch 2.14.1+cu130，mujoco 3.16，warp 1.18，mjlab@8bb2bc9</td>
+</tr>
+</tbody></table>
+<p>三个 venv 都放在 WSL 原生盘，不在 <code>/mnt/f</code> 上建：Windows 挂载盘的 IO 对 venv 的 import 和编译太慢。</p>
+<h2 id="九、局限与下一步"><a href="#九、局限与下一步" class="headerlink" title="九、局限与下一步"></a>九、局限与下一步</h2><p>这次没有做的事，和做了但还不够好的事，分开列：</p>
+<p><strong>没做：</strong></p>
+<ul>
+<li>ONNX 导出、真机部署；</li>
+<li>篮球建模、抓取&#x2F;运球；</li>
+<li>原视频 22.8 秒处的单腿跳没有剪进任何片段；</li>
+<li>SMPL-X 性别特化模型，只用了 neutral。</li>
+</ul>
+<p><strong>不够好：</strong></p>
+<ul>
+<li>两段各约 9 秒，纯本体感知策略在 100 秒级长片段会漂；仓库 README 已经指出，加 anchor 观测是已知解法；</li>
+<li>B 段 root 漂移 6.8 cm，明显高于 A；B 的抬腿期还有 0.70 秒脚底 &gt;2 cm，属于真实动作，但如果要更严格的接触一致性，应该回 GMR 调 IK 的足部权重；</li>
+<li>训练只跑了 3 小时，学习率没衰减完；延长到 8–10 小时是下一步最直接的提升；</li>
+<li>脚滑 0.169–0.307 m&#x2F;s，策略脚底最低点 -1.2 cm 左右，还不是“零接触误差”。</li>
+</ul>
+<h2 id="十、复现入口"><a href="#十、复现入口" class="headerlink" title="十、复现入口"></a>十、复现入口</h2><p>项目目录大致是这样：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">g1_dance/</span><br><span class="line">  scripts/                         # 链路胶水：动捕、重定向、地面修正、训练、评测</span><br><span class="line">  third_party/GVHMR/               # 单目人体动捕</span><br><span class="line">  third_party/GMR/                 # 人体 → G1 重定向</span><br><span class="line">  third_party/SuperMimic-Reproduced/  # 按论文复现的训练框架</span><br><span class="line">  data/&#123;raw,hmr,retarget,npz&#125;/     # 各阶段中间产物</span><br><span class="line">  reports/&#123;REPORT.md,*.json,videos/&#125;  # 指标、报告、对比视频</span><br></pre></td></tr></table></figure></div>
+
+<p>关键命令（脚本里的绝对路径是按本机 WSL 写的，换机器要改 <code>P=</code> 和 venv 路径）：</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 动捕</span></span><br><span class="line">scripts/run_gvhmr.sh A</span><br><span class="line">scripts/run_gvhmr.sh B</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 人体地面锁定 + 重定向 + 机器人地面锁定</span></span><br><span class="line">python scripts/ground_lock.py data/hmr/dance_A/hmr4d_results.pt data/hmr/dance_A/hmr4d_results_locked.pt</span><br><span class="line">scripts/run_gmr_locked.sh A B</span><br><span class="line">python scripts/robot_ground_lock.py data/retarget/locked/dance_A.pkl data/retarget/final/dance_A.pkl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 过渡帧 + 转 npz</span></span><br><span class="line">python scripts/pad_clip.py data/retarget/final/csv/dance_A.csv data/retarget/padded/dance_A.csv</span><br><span class="line">scripts/sm_step4_npz.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 训练 / 评测 / 出片</span></span><br><span class="line">scripts/sm_train.sh</span><br><span class="line">scripts/sm_eval.sh</span><br><span class="line">scripts/sm_render_rollout.sh</span><br></pre></td></tr></table></figure></div>
+
+<p>参考链接：</p>
+<ul>
+<li>GVHMR：<a class="link"   target="_blank" rel="noopener" href="https://github.com/zju3dv/GVHMR" >https://github.com/zju3dv/GVHMR<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>，论文 arXiv:2409.06662</li>
+<li>GMR：<a class="link"   target="_blank" rel="noopener" href="https://github.com/YanjieZe/GMR" >https://github.com/YanjieZe/GMR<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>，论文 arXiv:2505.02833</li>
+<li>SuperMimic：arXiv:2610.28480</li>
+<li>SuperMimic-Reproduced：<a class="link"   target="_blank" rel="noopener" href="https://github.com/CuboiLeo/SuperMimic-Reproduced" >https://github.com/CuboiLeo/SuperMimic-Reproduced<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></li>
+</ul>
+<p>如果这条链路只记一件事：<strong>把视频变成机器人动作，最难的通常不是模型推理，而是让每一层的坐标、尺度、接触定义对齐。</strong> 这次真正值得复用的，是地面锁定的那两层修正——它把一个“看起来能跳、但整体浮空”的结果，变成了 0 帧穿地的可训练参考动作。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 从一段舞蹈视频到 G1 跳舞：GVHMR + GMR + SuperMimic 全链路实践</li>
+        <li><strong>Author:</strong> 忘川</li>
+        <li><strong>Created at
+                :</strong> 2026-11-10 16:55:00</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2026-11-10 20:06:47
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://gggggxd.github.io/2026/11/10/g1-dance-pipeline/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E4%BA%BA%E5%BD%A2%E6%9C%BA%E5%99%A8%E4%BA%BA/">#人形机器人</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%8A%A8%E4%BD%9C%E6%8D%95%E6%8D%89/">#动作捕捉</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E8%BF%90%E5%8A%A8%E9%87%8D%E5%AE%9A%E5%90%91/">#运动重定向</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">#强化学习</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Unitree-G1/">#Unitree G1</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/MuJoCo/">#MuJoCo</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/11/10/pi05-paper-study/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">π0.5 论文精读、openpi 代码解读与 LIBERO 推理复现</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/05/23/labview-plate-recognition/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">LabVIEW车牌识别</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        (function() {
+            const containerId = "giscus-container";
+            const mapping = "title";
+            const lang = "zh-CN";
+            const inputPosition = "bottom";
+            const reactionsEnabled = "1" === "1";
+            const emitMetadata = "1" === "1";
+            const strict = "0" === "1";
+            const loading = "lazy";
+
+            const getTerm = () => {
+                if (mapping === "pathname") return location.pathname;
+                if (mapping === "url") return location.href;
+                if (mapping === "title") return document.title;
+                if (mapping === "og:title") {
+                    const ogTitle = document.querySelector("meta[property='og:title']");
+                    return ogTitle?.content || document.title;
+                }
+                return "";
+            };
+
+            const sendUpdate = () => {
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (!iframe) {
+                    return;
+                }
+
+                const setConfig = {
+                    theme: "preferred_color_scheme",
+                    lang,
+                    inputPosition,
+                    reactionsEnabled,
+                    emitMetadata,
+                    strict,
+                };
+
+                if (mapping !== "number") {
+                    const term = getTerm();
+                    if (term) {
+                        setConfig.term = term;
+                    }
+                }
+
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig } },
+                    "https://giscus.app",
+                );
+            };
+
+            const loadGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                const iframe = container.querySelector("iframe.giscus-frame");
+                if (iframe) {
+                    sendUpdate();
+                    return;
+                }
+
+                if (container.dataset.giscusInit === "true") {
+                    return;
+                }
+
+                const giscusConfig = {
+                    src: "https://giscus.app/client.js",
+                    "data-repo": "gggggxd/gggggxd.github.io",
+                    "data-repo-id": "R_kgDOQ4X0pw",
+                    "data-category": "Announcements",
+                    "data-category-id": "DIC_kwDOQ4X0p84C046D",
+                    "data-mapping": mapping,
+                    "data-strict": "0",
+                    "data-reactions-enabled": "1",
+                    "data-emit-metadata": "1",
+                    "data-theme": "preferred_color_scheme",
+                    "data-lang": lang,
+                    "data-input-position": inputPosition,
+                    "data-loading": loading,
+                    crossorigin: "anonymous",
+                    async: true,
+                };
+
+                const giscusScript = document.createElement("script");
+                for (const key in giscusConfig) {
+                    giscusScript.setAttribute(key, giscusConfig[key]);
+                }
+                container.appendChild(giscusScript);
+                container.dataset.giscusInit = "true";
+            };
+
+            const runGiscus = () => {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    return;
+                }
+
+                if (container.querySelector("iframe.giscus-frame")) {
+                    sendUpdate();
+                    return;
+                }
+
+                loadGiscus();
+            };
+
+            runGiscus();
+        })();
+    </script>
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">从一段舞蹈视频到 G1 跳舞：GVHMR + GMR + SuperMimic 全链路实践</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E7%BB%93%E6%9E%9C"><span class="nav-text">先看结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E9%93%BE%E8%B7%AF"><span class="nav-text">一、整体链路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%8D%95%E7%9B%AE%E5%8A%A8%E6%8D%95%EF%BC%9AGVHMR"><span class="nav-text">二、单目动捕：GVHMR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%87%8D%E5%AE%9A%E5%90%91%EF%BC%9AGMR"><span class="nav-text">三、重定向：GMR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%9C%B0%E9%9D%A2%E9%94%81%E5%AE%9A%EF%BC%9A%E8%BF%99%E6%AC%A1%E9%93%BE%E8%B7%AF%E9%87%8C%E6%9C%80%E5%AE%9E%E8%B4%A8%E7%9A%84%E5%B7%A5%E7%A8%8B%E9%97%AE%E9%A2%98"><span class="nav-text">四、地面锁定：这次链路里最实质的工程问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%AF%B9%E4%BA%BA%E4%BD%93%EF%BC%9A2-%E7%A7%92%E6%BB%9A%E5%8A%A8%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-text">4.1 对人体：2 秒滚动最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AF%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%9A0-5-%E7%A7%92%E6%BB%9A%E5%8A%A8%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-text">4.2 对机器人：0.5 秒滚动最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E4%BF%AE%E6%AD%A3%E5%90%8E%E7%9A%84%E6%8C%87%E6%A0%87"><span class="nav-text">4.3 修正后的指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BF%87%E6%B8%A1%E5%B8%A7%E4%B8%8E-50-Hz-%E6%95%B0%E6%8D%AE"><span class="nav-text">五、过渡帧与 50 Hz 数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E8%AE%AD%E7%BB%83%EF%BC%9ASuperMimic"><span class="nav-text">六、训练：SuperMimic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E8%AF%84%E6%B5%8B%EF%BC%9A0-8525%EF%BC%8C%E9%9B%B6%E5%A4%B1%E8%B4%A5"><span class="nav-text">七、评测：0.8525，零失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E8%B8%A9%E8%BF%87%E7%9A%84%E7%8E%AF%E5%A2%83%E5%9D%91"><span class="nav-text">八、踩过的环境坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%B1%80%E9%99%90%E4%B8%8E%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="nav-text">九、局限与下一步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%A4%8D%E7%8E%B0%E5%85%A5%E5%8F%A3"><span class="nav-text">十、复现入口</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2026</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">忘川</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        54 posts in total
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="Image viewer">
+	<button class="image-viewer-close" type="button" aria-label="Close">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="Prev">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="Close">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="Next">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Search..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>

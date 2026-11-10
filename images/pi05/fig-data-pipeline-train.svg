@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="550" viewBox="0 0 1900 550" role="img" aria-labelledby="title desc">
+  <title id="title">ALOHA 训练输入：从 LeRobot 动作片段到模型样本</title>
+  <desc id="desc">训练样本经 LeRobot 取帧、Repack、AlohaInputs、DeltaActions、Normalize 和模型输入变换后成为模型张量。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#536777"/></marker>
+    <marker id="blue-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3977a8"/></marker>
+    <marker id="orange-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d27b34"/></marker>
+    <marker id="green-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10z" fill="#71956a"/></marker>
+    <style>
+      text{font-family:"Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif;fill:#293b49}.title{font-size:35px;font-weight:700}.sub{font-size:18px;fill:#596b78}.lane{font-size:24px;font-weight:700}.head{font-size:17px;font-weight:700}.body{font-size:15px;fill:#465966}.note{font-size:14px;fill:#536573}
+      .panel{fill:#fcfdfe;stroke:#9cabb6;stroke-width:2.2}.source{fill:#f1f4f6;stroke:#9aa8b1;stroke-width:2.2}.train-only{fill:#fff1e1;stroke:#d38a4c;stroke-width:2.3}.shared{fill:#e8f1fa;stroke:#5c84a8;stroke-width:2.3}.infer-only{fill:#edf5e9;stroke:#74996b;stroke-width:2.3}.output{fill:#f2eff9;stroke:#9383b1;stroke-width:2.3}
+      .arrow{fill:none;stroke:#536777;stroke-width:2.8;marker-end:url(#arrow)}.shared-arrow{fill:none;stroke:#3977a8;stroke-width:2.8;marker-end:url(#blue-arrow)}.train-arrow{fill:none;stroke:#d27b34;stroke-width:2.8;marker-end:url(#orange-arrow)}.infer-arrow{fill:none;stroke:#71956a;stroke-width:2.8;marker-end:url(#green-arrow)}
+    </style>
+  </defs>
+  <rect width="1900" height="550" fill="#fff"/>
+  <text class="title" x="950" y="56" text-anchor="middle">ALOHA 训练输入：从 LeRobot 动作片段到模型样本</text>
+  <text class="sub" x="950" y="94" text-anchor="middle">① 取帧 → ② Repack → ③ 机器人适配 → ④ Delta → ⑤ Normalize → ⑥–⑧ 统一到模型输入</text>
+
+  <rect class="panel" x="45" y="130" width="1810" height="325" rx="13"/>
+  <text class="lane" x="78" y="174">训练侧处理链：原始字段 → 模型张量</text>
+  <rect class="source" x="80" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="195" y="255" text-anchor="middle">① LeRobotDataset</text>
+  <text class="body" x="195" y="292" text-anchor="middle">state [14]</text><text class="body" x="195" y="320" text-anchor="middle">actions [50,14]</text><text class="body" x="195" y="348" text-anchor="middle">时间对齐的相机帧</text><text class="note" x="195" y="380" text-anchor="middle">4 路原始相机输入</text>
+
+  <rect class="train-only" x="340" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="455" y="255" text-anchor="middle">② Repack</text>
+  <text class="body" x="455" y="292" text-anchor="middle">原始 key → images /</text><text class="body" x="455" y="318" text-anchor="middle">state / actions</text><text class="body" x="455" y="350" text-anchor="middle">选 high + 左右腕相机</text><text class="note" x="455" y="380" text-anchor="middle">本例不选 cam_low</text>
+
+  <rect class="shared" x="600" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="715" y="255" text-anchor="middle">③ AlohaInputs</text>
+  <text class="body" x="715" y="292" text-anchor="middle">相机槽位与 image_mask</text><text class="body" x="715" y="320" text-anchor="middle">CHW → HWC</text><text class="body" x="715" y="350" text-anchor="middle">关节 / 夹爪换算</text><text class="note" x="715" y="380" text-anchor="middle">缺少腕部相机时补零并屏蔽</text>
+
+  <rect class="train-only" x="860" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="975" y="255" text-anchor="middle">④ DeltaActions</text>
+  <text class="body" x="975" y="292" text-anchor="middle">动作转相对当前 state</text><text class="body" x="975" y="322" text-anchor="middle">只处理 12 个臂关节维</text><text class="body" x="975" y="352" text-anchor="middle">两个夹爪维保持原值</text>
+
+  <rect class="shared" x="1120" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="1235" y="255" text-anchor="middle">⑤ Normalize</text>
+  <text class="body" x="1235" y="292" text-anchor="middle">q01 / q99 → [-1, 1]</text><text class="body" x="1235" y="322" text-anchor="middle">使用训练集统计量</text><text class="note" x="1235" y="354" text-anchor="middle">无额外裁剪</text>
+
+  <rect class="shared" x="1380" y="220" width="230" height="185" rx="10"/>
+  <text class="head" x="1495" y="255" text-anchor="middle">⑥–⑧ 模型变换</text>
+  <text class="body" x="1495" y="292" text-anchor="middle">注入 prompt → Resize</text><text class="body" x="1495" y="320" text-anchor="middle">TokenizePrompt [200]</text><text class="body" x="1495" y="350" text-anchor="middle">state / actions 补到 32</text>
+
+  <rect class="shared" x="1640" y="220" width="210" height="185" rx="10"/>
+  <text class="head" x="1745" y="255" text-anchor="middle">模型样本</text>
+  <text class="body" x="1745" y="292" text-anchor="middle">B = batch</text><text class="body" x="1745" y="318" text-anchor="middle">images ×3 [B,224,224,3]</text><text class="body" x="1745" y="344" text-anchor="middle">state [B,32]</text><text class="body" x="1745" y="370" text-anchor="middle">prompt [B,200]</text><text class="note" x="1745" y="394" text-anchor="middle">actions [B,50,32]</text>
+
+  <path class="arrow" d="M310 312H340"/><path class="train-arrow" d="M570 312H600"/><path class="shared-arrow" d="M830 312H860"/><path class="train-arrow" d="M1090 312H1120"/><path class="shared-arrow" d="M1350 312H1380"/><path class="shared-arrow" d="M1610 312H1640"/>
+
+  <rect class="source" x="690" y="480" width="25" height="20" rx="3"/><text class="note" x="725" y="496">数据源</text>
+  <rect class="train-only" x="840" y="480" width="25" height="20" rx="3"/><text class="note" x="875" y="496">训练专属</text>
+  <rect class="shared" x="1040" y="480" width="25" height="20" rx="3"/><text class="note" x="1075" y="496">训练 / 推理共用</text>
+  <text class="note" x="950" y="530" text-anchor="middle">⑥–⑧ 在图中合并展示，正文按 ①–⑧ 逐步说明。</text>
+</svg>
