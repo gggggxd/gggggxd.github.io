@@ -94,7 +94,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://gggggxd.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2026-11-02T03:23:56.000Z">
-<meta property="article:modified_time" content="2026-11-11T10:01:58.064Z">
+<meta property="article:modified_time" content="2026-11-11T10:08:27.432Z">
 <meta property="article:author" content="忘川">
 <meta property="article:tag" content="Flow Matching">
 <meta property="article:tag" content="LIBERO">
@@ -634,8 +634,8 @@ mjx-container[display="true"] + br {
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-11-11 18:01:58</span>
-            <span class="mobile">2026-11-11 18:01:58</span>
+            <span class="desktop">2026-11-11 18:08:27</span>
+            <span class="mobile">2026-11-11 18:08:27</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -772,7 +772,7 @@ mjx-container[display="true"] + br {
 <li>数据</li>
 <li>架构</li>
 <li>训练</li>
-<li>推理链路与 LIBERO 复现</li>
+<li>LIBERO 推理复现</li>
 </ol>
 <ul>
 <li>附录 A :环境与启动命令</li>
@@ -1255,7 +1255,7 @@ a'_{t+k,j}=a_{t+k,j}-\boldsymbol{1}[j\in\mathcal{D}]s_{t,j},
 <li>mask：padding 位置由 <code>input_mask</code> 忽略。</li>
 </ul>
 <p><strong>样例汇总。</strong> 模型输入：<code>images</code> 3 路 <code>[3,224,224]</code>、<code>prompt</code> <code>[200]</code>、<code>actions</code> <code>[50,32]</code>；state 已经离散进 prompt，不再是单独的连续向量。</p>
-<p><strong>训练链与推理链。</strong> 训练链由 <code>data_loader.py</code> 组装，推理链由 <code>policy_config.py</code> 组装。两链的关键差异有三处：推理观测没有 <code>actions</code>，所以 <code>DeltaActions</code> 会跳过；归一化统计量在训练时来自数据，在推理时从 checkpoint 的 <code>assets/&lt;asset_id&gt;</code> 读取；输出端先反归一化，再按本体切回真实维度。训练侧的数据流见图 14，推理侧的输入/输出链见图 15；<code>Policy.infer</code> 负责给单样本加 <code>B=1</code>，输出细节见 §5.3。</p>
+<p><strong>训练链与推理链。</strong> 训练链由 <code>data_loader.py</code> 组装，推理链由 <code>policy_config.py</code> 组装。两链的关键差异有三处：推理观测没有 <code>actions</code>，所以 <code>DeltaActions</code> 会跳过；归一化统计量在训练时来自数据，在推理时从 checkpoint 的 <code>assets/&lt;asset_id&gt;</code> 读取；输出端先反归一化，再按本体切回真实维度。训练侧的数据流见图 14；<code>Policy.infer</code> 负责给单样本加 <code>B=1</code>，输出细节见 §5.2。</p>
 <p>数据处理完，下一节看训练目标。</p>
 <h3 id="4-2-损失函数"><a href="#4-2-损失函数" class="headerlink" title="4.2 损失函数"></a>4.2 损失函数</h3><p>第 3.1 节的图 9 已概览论文的两阶段训练；本节只保留损失形式、权重和配方差异，flow matching 的采样、前向与去噪见 §3.5。</p>
 <p><strong>两项损失。</strong> [论文] π0.5 先进行 280k 步交叉熵预训练，再进行 80k 步交叉熵与 flow matching 的联合训练。<strong>openpi 的 <code>Pi0.compute_loss</code> 只实现 flow matching，没有文本交叉熵项或 <mjx-container class="MathJax" jax="SVG" overflow="overflow"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.448ex" height="1.025ex" role="img" focusable="false" viewBox="0 -442 640 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math" data-latex="\alpha"><g data-mml-node="mi" data-latex="\alpha"><path data-c="1D6FC" d="M310 442C241 442 179 412 124 353C69 294 41 229 41 159C41 61 107-11 205-11C274-11 342 16 410 69C425 16 456-11 502-11C538-11 589 27 589 63C589 72 584 76 573 76C566 76 560 72 557 64C549 43 528 18 505 18C488 18 479 50 479 115C479 129 482 140 488 147C515 180 539 218 558 260C583 314 598 354 602 380L602 384C599 391 593 394 586 394C581 393 575 385 568 371C547 299 518 237 479 186L479 236C479 352 421 442 310 442M403 211C403 152 404 116 405 103C340 46 274 18 207 18C150 18 122 53 122 122C122 180 155 288 178 324C216 383 260 413 309 413C340 413 361 401 374 377C381 365 386 353 391 342C399 319 403 258 403 211Z"></path></g></g></g></svg></mjx-container></strong> [代码]。</p>
@@ -1286,7 +1286,7 @@ a'_{t+k,j}=a_{t+k,j}-\boldsymbol{1}[j\in\mathcal{D}]s_{t,j},
 
 <p>LIBERO 推理复现只用三样东西：官方 <code>pi05_libero</code> 权重、内置 <code>pi05_libero</code> config、内置 <code>examples/libero/main.py</code>。LIBERO 评测链路 0 行改动，未替换权重或添加 LoRA；ALOHA 数据链示例另外扩展了三路相机配置。环境准备和启动命令见附录 A。</p>
 <p><img lazyload="" src="/images/loading.svg" data-src="/images/pi05/fig-openpi-envs.png" alt="openpi 的 server / client 两个环境"></p>
-<p><em>图 16：策略服务端和 LIBERO 仿真客户端的运行环境与消息方向。</em></p>
+<p><em>图 15：策略服务端和 LIBERO 仿真客户端的运行环境与消息方向。</em></p>
 <p>下面先看服务端启动和配置。</p>
 <p><code>--env LIBERO</code> 从默认映射中选出 <code>pi05_libero</code> config 和 checkpoint 目录；随后加载 bf16 参数与 checkpoint 内的 norm stats，并启动 websocket 服务。它选择的是 π0.5 checkpoint，不是模型版本开关。</p>
 <p><code>pi05_libero</code> config 的关键开关如下：</p>
@@ -1300,13 +1300,13 @@ a'_{t+k,j}=a_{t+k,j}-\boldsymbol{1}[j\in\mathcal{D}]s_{t,j},
 </blockquote>
 <p>数据侧，<code>prompt_from_task=True</code> 使用数据集任务名；<code>extra_delta_transform=False</code> 保留 LIBERO 已经是 delta 的动作（见 §4.1）。</p>
 <p>服务端每个连接串行处理，没有请求队列，也没有超时；第一次调用会包含 JAX 的 JIT 编译时间，后面的调用才是稳定延迟。</p>
-<h3 id="5-3-LIBERO-客户端"><a href="#5-3-LIBERO-客户端" class="headerlink" title="5.3 LIBERO 客户端"></a>5.3 LIBERO 客户端</h3><p>评测分为服务端推理和客户端仿真两部分，完整 episode 循环见图 17。</p>
+<h3 id="5-2-LIBERO-客户端"><a href="#5-2-LIBERO-客户端" class="headerlink" title="5.2 LIBERO 客户端"></a>5.2 LIBERO 客户端</h3><p>评测分为服务端推理和客户端仿真两部分，完整 episode 循环见图 16。</p>
 <p><img lazyload="" src="/images/loading.svg" data-src="/images/pi05/fig-repro-route.png" alt="LIBERO 评测链路"></p>
-<p><em>图 17：单局控制时序。动作队列耗尽时请求服务端，缓存预测动作的前 5 步；到 done 或 max_steps 时结束本局；图中底部按 2,000 局全量汇总。自制图。</em></p>
+<p><em>图 16：单局控制时序。动作队列耗尽时请求服务端，缓存预测动作的前 5 步；到 done 或 max_steps 时结束本局；图中底部按 2,000 局全量汇总。自制图。</em></p>
 <p>每局从 <code>env.set_init_state</code> 开始，先执行 10 步 dummy action 等物体落稳；这段等待不计入策略步数。</p>
 <p>之后每个控制步做四件事：旋转图像、拼 state、需要时请求、执行一个动作；一局到 <code>done</code> 或 <code>max_steps</code> 结束。</p>
 <p>LIBERO 图像需先旋转 180° 再 resize 到 224，以匹配训练预处理；漏掉旋转会让策略看到反向图像。</p>
-<p>客户端 state 按末端位置 3 维、轴角 3 维、夹爪 2 维拼成 8 维；<code>LiberoInputs</code> 和 <code>Normalize</code> 要求这个形状与顺序。模型侧不读 state（见 §5.2 的 callout），这一步只是保持接口一致。</p>
+<p>客户端 state 按末端位置 3 维、轴角 3 维、夹爪 2 维拼成 8 维；<code>LiberoInputs</code> 和 <code>Normalize</code> 要求这个形状与顺序。模型侧不读 state（见 §5.1 的 callout），这一步只是保持接口一致。</p>
 <p><strong>动作块如何还原。</strong> 服务端返回前，<code>Policy.infer</code> 已完成输出变换：18 层 suffix 输出 <code>[B, H, 1024]</code>，<code>action_out_proj</code> 投到 <code>[B, H, 32]</code>；<code>Unnormalize</code> 把 <code>[-1, 1]</code> 还原到原始量纲，<code>LiberoOutputs</code> 再切回 7 维（ALOHA 14 维、DROID 8 维）。客户端拿到的 <code>actions</code> 已是可执行维度，按行读取即可。</p>
 <p>动作队列为空时请求 <code>[10, 7]</code> 动作块，将前 5 步放入 deque 逐步执行；执行完后再请求下一块。</p>
 <p><strong>每次预测执行多少步。</strong> 上面只取前 5 步不是随手截断，而是按执行 horizon 主动丢弃后半段。各示例的配置不同：</p>
@@ -1389,7 +1389,7 @@ t\leftarrow t+K,
 </tbody></table>
 <p><em>表 4：LIBERO 各 suite 的 <code>max_steps</code>。</em></p>
 <p>循环上限是 <code>max_steps + num_steps_wait</code>；到上限还没 <code>done</code> 就算失败。</p>
-<h3 id="5-4-耗时与结果"><a href="#5-4-耗时与结果" class="headerlink" title="5.4 耗时与结果"></a>5.4 耗时与结果</h3><p><strong>整条链耗时。</strong> 以下耗时来自本机 WSL2 + RTX 5060 Ti 16 GB（server 约 10.4 GB 显存）。从 checkpoint 下载到 2,000 局全量跑完，主要耗时如下：</p>
+<h3 id="5-3-耗时与结果"><a href="#5-3-耗时与结果" class="headerlink" title="5.3 耗时与结果"></a>5.3 耗时与结果</h3><p><strong>整条链耗时。</strong> 以下耗时来自本机 WSL2 + RTX 5060 Ti 16 GB（server 约 10.4 GB 显存）。从 checkpoint 下载到 2,000 局全量跑完，主要耗时如下：</p>
 <table>
 <thead>
 <tr>
@@ -1422,7 +1422,7 @@ t\leftarrow t+K,
 <td>8 小时 14 分 19 秒；平均 14.83 秒/局</td>
 </tr>
 </tbody></table>
-<p><em>表 5：推理复现耗时，编号对应图 17 的步骤；⑧ 同时给出 400 局 pilot 与 2,000 局全量。</em></p>
+<p><em>表 5：推理复现耗时，编号对应图 16 的步骤；⑧ 同时给出 400 局 pilot 与 2,000 局全量。</em></p>
 <p><strong>2,000 局全量结果。</strong> ⑧ 的成功判据是 <code>env.step</code> 返回 <code>done</code>。两次评测都没有使用 <code>info["is_success"]</code> 或 return。</p>
 <p>全量按 openpi README 的协议，每个任务 50 局、四个 suite 共 2,000 局（2026-11-05 20:32 – 11-06 04:47）。openpi README 的 π0.5 @30k 平均为 96.85%。</p>
 <p>四个 suite 分别考查空间关系、物体泛化、目标达成和长程任务，衡量的能力各不相同。</p>
@@ -1489,7 +1489,7 @@ t\leftarrow t+K,
 <p><em><code>libero_goal</code>（成功，12.0 s）</em><br><video controls="" preload="metadata" playsinline="" width="360" src="/images/pi05/videos/libero_10_success.mp4"></video></p>
 <p><em><code>libero_10</code>（成功，23.7 s）</em><br><video controls="" preload="metadata" playsinline="" width="360" src="/images/pi05/videos/libero_10_failure.mp4"></video></p>
 <p><em><code>libero_10</code>（失败，走满 520 步，52.0 s）</em></p>
-<h3 id="5-5-局限与讨论"><a href="#5-5-局限与讨论" class="headerlink" title="5.5 局限与讨论"></a>5.5 局限与讨论</h3><p>论文自己列了三类失败：不熟悉的抽屉把手或物理上难开的柜门；部分可观测（例如机械臂挡住要擦的污渍）；高层子任务容易被分散（放东西时反复开关抽屉）。方法层面的限制是 prompt 还比较简单、context 和 memory 有限，跨房间导航或记住物体位置这类任务还不够；预训练数据和配方没有开源，openpi 只提供后训练 checkpoint 和低层推理接口。</p>
+<h3 id="5-4-局限与讨论"><a href="#5-4-局限与讨论" class="headerlink" title="5.4 局限与讨论"></a>5.4 局限与讨论</h3><p>论文自己列了三类失败：不熟悉的抽屉把手或物理上难开的柜门；部分可观测（例如机械臂挡住要擦的污渍）；高层子任务容易被分散（放东西时反复开关抽屉）。方法层面的限制是 prompt 还比较简单、context 和 memory 有限，跨房间导航或记住物体位置这类任务还不够；预训练数据和配方没有开源，openpi 只提供后训练 checkpoint 和低层推理接口。</p>
 <p>对本次复现而言，LIBERO 评测是 low-level、vision-language only 的仿真结果：它验证了 checkpoint、数据预处理、动作块执行和评测链路，但不能替代论文的真实家庭实验，也没有覆盖高层子任务生成。下一步如果要继续，可以优先补三件事：用 <code>pi05_base</code> 在真实/仿真数据上做高层子任务微调；把 state 重新接回低层（优先试 <code>discrete_state_input=True</code>；若要 π0 式的连续 state token，则改 <code>embed_suffix</code>）；在 LIBERO 之外加一个长程、多阶段的评测。</p>
 <h2 id="附录-A：环境与启动命令"><a href="#附录-A：环境与启动命令" class="headerlink" title="附录 A：环境与启动命令"></a>附录 A：环境与启动命令</h2><p>本次推理复现需要分别准备服务端和客户端 Python 环境、对应的 requirements、<code>~/.libero/config.yaml</code>、12.44 GB checkpoint，以及 EGL 离屏渲染。服务端和客户端分别启动：</p>
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 终端 1：服务端</span></span><br><span class="line"><span class="comment"># 切换到 openpi 仓库根目录。</span></span><br><span class="line"><span class="built_in">cd</span> ~/openpi</span><br><span class="line"><span class="comment"># 关闭 XLA 启动时的显存预分配，并启动 LIBERO 策略 WebSocket 服务。</span></span><br><span class="line">XLA_PYTHON_CLIENT_PREALLOCATE=<span class="literal">false</span> .venv/bin/python scripts/serve_policy.py --<span class="built_in">env</span> LIBERO</span><br></pre></td></tr></table></figure></div>
@@ -1516,7 +1516,7 @@ t\leftarrow t+K,
         
             <li>
                 <strong>Updated at
-                    :</strong> 2026-11-11 18:01:58
+                    :</strong> 2026-11-11 18:08:27
             </li>
         
         <li>
@@ -1723,7 +1723,7 @@ t\leftarrow t+K,
 	<div class="post-toc">
 		<div class="toc-title">On this page</div>
 		<div class="page-title">π0.5 论文精读、openpi 代码解读与 LIBERO 推理复现</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8A%A8%E6%9C%BA"><span class="nav-text">1. 动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE"><span class="nav-text">2. 数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%85%AD%E7%B1%BB%E6%95%B0%E6%8D%AE"><span class="nav-text">2.1 六类数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%B3%9B%E5%8C%96%E8%AF%81%E6%8D%AE%EF%BC%9A%E4%BB%8E%E7%9C%9F%E5%AE%9E%E5%AE%B6%E5%BA%AD%E5%88%B0%E6%B6%88%E8%9E%8D"><span class="nav-text">2.2 泛化证据：从真实家庭到消融</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9E%B6%E6%9E%84"><span class="nav-text">3. 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-text">3.1 整体架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%AB%98%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="nav-text">3.2 高层模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%BD%8E%E5%B1%82%E6%A8%A1%E5%9E%8B%EF%BC%9AVLM-action-expert"><span class="nav-text">3.3 低层模型：VLM + action expert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%B3%A8%E6%84%8F%E5%8A%9B-mask%EF%BC%9Aprefix%E3%80%81suffix-%E4%B8%8E-FAST-token"><span class="nav-text">3.4 注意力 mask：prefix、suffix 与 FAST token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-flow-matching%EF%BC%9A%E4%BB%8E%E5%99%AA%E5%A3%B0%E5%88%B0%E5%8A%A8%E4%BD%9C%E5%9D%97"><span class="nav-text">3.5 flow matching：从噪声到动作块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%AE%AD%E7%BB%83"><span class="nav-text">4. 训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-text">4.1 训练数据处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">4.2 损失函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-LIBERO-%E6%8E%A8%E7%90%86%E5%A4%8D%E7%8E%B0"><span class="nav-text">5. LIBERO 推理复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-LIBERO-%E8%BF%90%E8%A1%8C%E6%A1%86%E6%9E%B6%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-text">5.1 LIBERO 运行框架与服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-LIBERO-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">5.3 LIBERO 客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E8%80%97%E6%97%B6%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-text">5.4 耗时与结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E5%B1%80%E9%99%90%E4%B8%8E%E8%AE%A8%E8%AE%BA"><span class="nav-text">5.5 局限与讨论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%BD%95-A%EF%BC%9A%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">附录 A：环境与启动命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8A%A8%E6%9C%BA"><span class="nav-text">1. 动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE"><span class="nav-text">2. 数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%85%AD%E7%B1%BB%E6%95%B0%E6%8D%AE"><span class="nav-text">2.1 六类数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%B3%9B%E5%8C%96%E8%AF%81%E6%8D%AE%EF%BC%9A%E4%BB%8E%E7%9C%9F%E5%AE%9E%E5%AE%B6%E5%BA%AD%E5%88%B0%E6%B6%88%E8%9E%8D"><span class="nav-text">2.2 泛化证据：从真实家庭到消融</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9E%B6%E6%9E%84"><span class="nav-text">3. 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-text">3.1 整体架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%AB%98%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="nav-text">3.2 高层模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%BD%8E%E5%B1%82%E6%A8%A1%E5%9E%8B%EF%BC%9AVLM-action-expert"><span class="nav-text">3.3 低层模型：VLM + action expert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%B3%A8%E6%84%8F%E5%8A%9B-mask%EF%BC%9Aprefix%E3%80%81suffix-%E4%B8%8E-FAST-token"><span class="nav-text">3.4 注意力 mask：prefix、suffix 与 FAST token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-flow-matching%EF%BC%9A%E4%BB%8E%E5%99%AA%E5%A3%B0%E5%88%B0%E5%8A%A8%E4%BD%9C%E5%9D%97"><span class="nav-text">3.5 flow matching：从噪声到动作块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%AE%AD%E7%BB%83"><span class="nav-text">4. 训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-text">4.1 训练数据处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">4.2 损失函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-LIBERO-%E6%8E%A8%E7%90%86%E5%A4%8D%E7%8E%B0"><span class="nav-text">5. LIBERO 推理复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-LIBERO-%E8%BF%90%E8%A1%8C%E6%A1%86%E6%9E%B6%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-text">5.1 LIBERO 运行框架与服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-LIBERO-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">5.2 LIBERO 客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E8%80%97%E6%97%B6%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-text">5.3 耗时与结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E5%B1%80%E9%99%90%E4%B8%8E%E8%AE%A8%E8%AE%BA"><span class="nav-text">5.4 局限与讨论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%BD%95-A%EF%BC%9A%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">附录 A：环境与启动命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol>
 
 	</div>
 </div>
